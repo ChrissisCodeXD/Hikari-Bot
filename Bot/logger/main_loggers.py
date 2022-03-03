@@ -28,7 +28,7 @@ class Logger():
 
         async with aiohttp.ClientSession() as session:
             webhook = Webhook.from_url(
-                'https://discord.com/api/webhooks/948907518179033150/ZPaTOsnOpjDg04LAYs-R0RuwgjU8DEdtZjuSR8gFDdynGSflb1DdrB6AmtwMLoQAkEv5',
+                'Webhook_URL',
                 adapter=AsyncWebhookAdapter(session))
 
             await webhook.send(
