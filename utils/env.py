@@ -1,5 +1,5 @@
 
-class CouldNotFindEnv:
+class CouldNotFindEnv(Exception):
     pass
 
 class raw_env:
