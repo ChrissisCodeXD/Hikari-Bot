@@ -5,7 +5,7 @@ from imports import *
 _BotT = t.TypeVar("_BotT", bound="Bot")
 
 from Bot import __version__, __prefix__, __beta__, __guilds__
-
+from utils import HelpCommand
 log = logging.getLogger(__name__)
 
 
@@ -13,7 +13,8 @@ class FirstBot(lightbulb.BotApp):
     def __init__(self):
         self._extensions = [p.stem for p in Path("./extensions/").glob("*.py")]
         self._extensions.extend([f"moderation.{p.stem}" for p in Path("./extensions/moderation/").glob("*.py")])
-        self.env = env()
+        self._extensions.extend([f"events.{p.stem}" for p in Path("./extensions/events/").glob("*.py")])
+        self.env = utils.env()
         self.token = token = self.env.get('TOKEN1')
         if __beta__ == True:
 
@@ -21,7 +22,9 @@ class FirstBot(lightbulb.BotApp):
                 token=token,
                 intents=hikari.Intents.ALL,
                 prefix=lightbulb.app.when_mentioned_or(__prefix__),
-                default_enabled_guilds=__guilds__
+                default_enabled_guilds=__guilds__,
+                help_class=HelpCommand,
+                help_slash_command=True
             )
         else:
             super().__init__(
@@ -59,11 +62,12 @@ class FirstBot(lightbulb.BotApp):
             self.load_extensions(f"Bot.extensions.{ext}")
             log.info(f"'{ext}' extension loaded")
 
+
         # cache = sake.redis.RedisCache(self, self, address="redis://127.0.0.1")
         # await cache.open()
         # log.info("Connected to Redis server")
 
-    async def on_started(self: _BotT, event: hikari.StartedEvent) -> None:
+    async def on_started(self: _BotT, event: lightbulb.LightbulbStartedEvent) -> None:
         """builder = (
             lavasnek_rs.LavalinkBuilder(int(b64decode(self.token.split(".")[0])), self.token)
             .set_host("127.0.0.1")
@@ -76,6 +80,8 @@ class FirstBot(lightbulb.BotApp):
         # self.stdout_channel = await self.rest.fetch_channel(STDOUT_CHANNEL_ID)
         # await self.stdout_channel.send(f"Testing v{__version__} now online!")"""
         log.info("Bot ready")
+        log.info(
+            f"Invite URL: https://discord.com/api/oauth2/authorize?client_id={self.get_me().id}&permissions=8&scope=bot%20applications.commands")
 
     async def on_stopping(self: _BotT, event: hikari.StoppingEvent) -> None:
         # This is gonna be fixed.

@@ -15,7 +15,7 @@ async def on_error(event):
             f"Something went wrong during invocation of command `{event.context.command.name}`.",
             delete_after=3
         )
-        await Log.send_error_log(event.exception, event.context.command.name)
+        await Log.send_error_log(event.exception, event.context.invoked_with)
         raise event.exception
 
     exception = event.exception.__cause__ or event.exception
@@ -38,13 +38,16 @@ async def on_error(event):
         return await event.context.respond("You are not the owner of this bot.", delete_after=3)
 
     if isinstance(exception, lightbulb.CommandIsOnCooldown):
-        await event.context.respond(f"This command is on cooldown. Retry in `{exception.retry_after:.2f}` seconds.",
+        return await event.context.respond(f"This command is on cooldown. Retry in `{exception.retry_after:.2f}` seconds.",
                                     delete_after=3)
 
-    if isinstance(exception, lightbulb.NotOwner):
-        await event.context.respond("You are not the owner of this bot.")
+    if isinstance(exception, lightbulb.errors.CommandNotFound):
+        [print(i) for i in event.app.prefix_commands]
+        return await event.context.respond(f"The Command {event.context.invoked_with} does not exist",delete_after=3)
 
-    await Log.send_error_log(event.exception, event.context.command.name)
+    if isinstance(exception, lightbulb.NotOwner):
+        return await event.context.respond("You are not the owner of this bot.",delete_after=3)
+    await Log.send_error_log(event.exception,event.context.invoked_with)
     raise (event.exception)
 
 

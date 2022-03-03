@@ -15,12 +15,12 @@ kick_plugin.add_checks(
 @lightbulb.option("member", "Kicks the given Member", hikari.Member, required=True)
 @lightbulb.option("reason", "The Reason for kicking the Member", str, required=False)
 @lightbulb.command("kick", "Kicks the given Member")
-@lightbulb.implements(lightbulb.UserCommand, lightbulb.SlashCommand, lightbulb.PrefixSubCommand)
+@lightbulb.implements(lightbulb.UserCommand, lightbulb.SlashCommand, lightbulb.PrefixCommand, lightbulb.MessageCommand)
 async def kick(ctx: lightbulb.Context) -> None:
     user = ctx.options.target if ctx.options.target else ctx.options.member
     res = ctx.options.reason or f"'No Reason Provided.' By {ctx.author.username}"
     await ctx.respond(f"Kicking **{user}**")
-    await ctx.bot.rest.kick_member( guild=ctx.get_guild(), reason=res)
+    await ctx.bot.rest.kick_member(user=user, guild=ctx.get_guild(), reason=res)
     await ctx.edit_last_response(f"Succesfully kicked `{user}` for `{res}`!")
 
 
