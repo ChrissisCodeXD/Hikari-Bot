@@ -3,7 +3,7 @@ import lightbulb.checks
 
 from imports import *
 
-clear_plugin = lightbulb.Plugin("clear")
+clear_plugin = lightbulb.Plugin("moderation.clear")
 clear_plugin.add_checks(
     lightbulb.checks.guild_only,
     lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.MANAGE_MESSAGES),

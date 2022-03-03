@@ -3,7 +3,7 @@ import lightbulb.checks
 
 from imports import *
 
-kick_plugin = lightbulb.Plugin("kick")
+kick_plugin = lightbulb.Plugin("moderation.kick")
 kick_plugin.add_checks(
     lightbulb.checks.guild_only,
     lightbulb.checks.bot_has_guild_permissions(hikari.Permissions.KICK_MEMBERS),
