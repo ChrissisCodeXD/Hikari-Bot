@@ -4,7 +4,7 @@ from pathlib import Path
 from logger.main_loggers import Logger
 
 
-__guilds__ = (872940658472648736)
+__guilds__ = (872940658472648736,948904191559077888)
 
 __beta__ = True
 __prefix__ = "!"

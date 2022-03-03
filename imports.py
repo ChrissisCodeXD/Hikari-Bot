@@ -2,7 +2,6 @@ import hikari
 import lightbulb
 from pathlib import Path
 import os
-from utils.env import env
 import typing as t
 import logging
 import utils
