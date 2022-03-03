@@ -234,12 +234,13 @@ class HelpCommand(BaseHelpCommand):
         header: str,
     ) -> None:
         for plugin, cmds in cmds.items():
-            pages[plugin.name if plugin is not None else 'Uncategorised'].append((f"{plugin.description}\n" if plugin.description else "No description provided\n")
-                        if plugin is not None
-                        else "")
-            pages[plugin.name if plugin is not None else 'Uncategorised'].append(f"== {header} Commands")
+            ### ToDo
+            #pages[plugin.name if plugin is not None else 'Uncategorised'].append((f"{plugin.description}\n" if plugin.description else "No description provided\n")
+            #            if plugin is not None
+            #            else "")
+            pages[plugin.name.split(".")[0] if plugin is not None else 'Uncategorised'].append(f"== {header} Commands")
             for cmd in set(cmds):
-                pages[plugin.name if plugin is not None else 'Uncategorised'].append(f"- {cmd.name} - {cmd.description}")
+                pages[plugin.name.split(".")[0] if plugin is not None else 'Uncategorised'].append(f"- {cmd.name} - {cmd.description}")
 
     async def send_bot_help(self, context: context_.base.Context) -> None:
         pages = []
@@ -277,6 +278,7 @@ class HelpCommand(BaseHelpCommand):
                     [
                         ">>> ```adoc",
                         f"==== {plugin} ====",
+                        "",
                         *page,
                         "```",
                     ]
