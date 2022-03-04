@@ -9,6 +9,20 @@ from utils import HelpCommand
 log = logging.getLogger(__name__)
 
 
+prefixes = {
+    "948904191559077888":"."
+}
+
+
+def get_prefix(botApp,msg:hikari.Message):
+
+    prfx = prefixes.get(str(msg.guild_id))
+    if prfx:
+        return prfx
+    else:
+        return "!"
+
+
 class FirstBot(lightbulb.BotApp):
     def __init__(self):
         self._extensions = [p.stem for p in Path("./extensions/").glob("*.py")]
@@ -21,17 +35,29 @@ class FirstBot(lightbulb.BotApp):
             super().__init__(
                 token=token,
                 intents=hikari.Intents.ALL,
-                prefix=lightbulb.app.when_mentioned_or(__prefix__),
+                prefix=lightbulb.app.when_mentioned_or(get_prefix),
                 default_enabled_guilds=__guilds__,
                 help_class=HelpCommand,
-                help_slash_command=True
+                help_slash_command=True,
+                ignore_bots=True,
+                case_insensitive_prefix_commands=True,
+                logs={
+                    "version": 1,
+                    "incremental": True,
+                    "loggers": {
+                        "hikari": {"level": "INFO"},
+                        "lightbulb": {"level": "INFO"},
+                    },
+                },
             )
         else:
             super().__init__(
                 token=token,
                 intents=hikari.Intents.ALL,
-                prefix=lightbulb.app.when_mentioned_or(__prefix__),
+                prefix=lightbulb.app.when_mentioned_or(get_prefix),
                 ignore_bots=True,
+                help_class=HelpCommand,
+                help_slash_command=True,
                 case_insensitive_prefix_commands=True,
                 logs={
                     "version": 1,
