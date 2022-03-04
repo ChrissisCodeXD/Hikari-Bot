@@ -5,11 +5,13 @@ from logger.main_loggers import Logger
 
 
 __guilds__ = (872940658472648736,948904191559077888)
+__plugins__ = ["moderation"]
+
 
 __beta__ = True
 __prefix__ = "!"
 __productname__ = "1. Test Bot"
-__version__ = "0.0.1beta"
+__version__ = "0.0.2.3beta"
 __description__ = "A Discord bot designed for the Carberra Tutorials Discord server."
 __url__ = "https://github.com/ChrissisCodeXD/Hikari-TestProject"
 __authors__ = ("Christopher Mehnert")
