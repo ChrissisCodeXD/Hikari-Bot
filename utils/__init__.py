@@ -5,3 +5,4 @@ from utils.Events import EveryoneMentionedEvent, BotMentionedEvent
 
 from utils.env import env
 from utils.HelpCommand import HelpCommand
+from utils.similar import similar
