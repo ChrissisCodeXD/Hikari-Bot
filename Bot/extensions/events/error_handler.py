@@ -42,8 +42,11 @@ async def on_error(event):
                                     delete_after=3)
 
     if isinstance(exception, lightbulb.errors.CommandNotFound):
-        [print(i) for i in event.app.prefix_commands]
-        return await event.context.respond(f"The Command {event.context.invoked_with} does not exist",delete_after=3)
+        temp = {}
+        for i in event.app.prefix_commands:
+            temp[str(i)]= utils.similar(i,event.context.invoked_with)
+        temp = sorted(temp.items(), key=lambda x: x[1], reverse=True)
+        return await event.context.respond(f"The Command {event.context.invoked_with} does not exist!\nDid you mean {__prefix__}{temp[0][0]} or {__prefix__}{temp[1][0]}?",delete_after=5)
 
     if isinstance(exception, lightbulb.NotOwner):
         return await event.context.respond("You are not the owner of this bot.",delete_after=3)
