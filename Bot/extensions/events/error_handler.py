@@ -47,6 +47,13 @@ async def on_error(event):
 
     if isinstance(exception, lightbulb.NotOwner):
         return await event.context.respond("You are not the owner of this bot.",delete_after=3)
+
+    if isinstance(exception, lightbulb.errors.BotMissingRequiredPermission):
+        return await event.context.respond("The bot is missing one or more permissions required in order to run this command", delete_after=3)
+
+    if isinstance(exception, lightbulb.errors.MissingRequiredPermission):
+        return await event.context.respond("You are missing one or more permissions required in order to run this command", delete_after=3)
+
     await Log.send_error_log(event.exception,event.context.invoked_with)
     raise (event.exception)
 
