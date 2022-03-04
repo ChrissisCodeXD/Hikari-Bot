@@ -14,7 +14,6 @@ idna
 multidict
 mysql
 mysql-connector
-mysqlclient
 pytz
 typing-extensions
 yarl
