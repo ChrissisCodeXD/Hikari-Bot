@@ -16,8 +16,15 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lightbulb. If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
+from Bot import __plugins__
 
 __all__ = ["BaseHelpCommand", "HelpCommand", "filter_commands"]
+
+
+descriptions = {
+    "moderation": f"The Plugin with all of the Moderation Commands. Helps you moderate your Server!",
+    "Uncategorised": f"Every Command without a Category. This should only be the Help Command i guess"
+}
 
 import abc
 import collections
@@ -125,9 +132,10 @@ class BaseHelpCommand(abc.ABC):
             await self.send_command_help(context, u_cmd)
             return
 
-        plugin = self.app.get_plugin(obj)
-        if plugin is not None:
-            await self.send_plugin_help(context, plugin)
+
+
+        if obj in __plugins__:
+            await self.send_plugin_help(context, obj)
             return
 
         await self.object_not_found(context, obj)
@@ -233,16 +241,43 @@ class HelpCommand(BaseHelpCommand):
         cmds: t.Mapping[t.Optional[plugins.Plugin], t.List[commands.base.Command]],
         header: str,
     ) -> None:
+        temp = {}
         for plugin, cmds in cmds.items():
             ### ToDo
             #pages[plugin.name if plugin is not None else 'Uncategorised'].append((f"{plugin.description}\n" if plugin.description else "No description provided\n")
             #            if plugin is not None
             #            else "")
-            pages[plugin.name.split(".")[0] if plugin is not None else 'Uncategorised'].append(f"== {header} Commands")
+            tmp_pl_name = plugin.name.split(".")[0] if plugin is not None else 'Uncategorised'
+            if not tmp_pl_name in temp: temp[plugin.name.split(".")[0] if plugin is not None else 'Uncategorised'] = {}
+            if not header in temp[tmp_pl_name]: temp[tmp_pl_name][f"{header}"] = []
             for cmd in set(cmds):
-                pages[plugin.name.split(".")[0] if plugin is not None else 'Uncategorised'].append(f"- {cmd.name} - {cmd.description}")
+                temp[tmp_pl_name][f"{header}"].append(f"- {cmd.name} - {cmd.description}")
+            pages[tmp_pl_name].append(f"== {header} Commands")
+            for cmd in set(cmds):
+                pages[tmp_pl_name].append(f"- {cmd.name} - {cmd.description}")
+        return temp
+        #for plugin, cmds in temp.items():
+        #    print(f"PLUGIN!!!! {plugin}")
+        #    print(f"CMDS!!!! {cmds}")
+    @staticmethod
+    def merge(tomrg):
+        toret = {}
+        for i in tomrg:
+            for k, e in i.items():
+                if not k in toret: toret[k] = []
+
+                for type, cmds in e.items():
+                    toret[k].append(f"== {type} Commands")
+                    toret[k].extend(cmds)
+        return toret
 
     async def send_bot_help(self, context: context_.base.Context) -> None:
+        pluginssss = []
+        for plugin in self.app._plugins.values():
+            if not plugin._raw_commands or all([c.hidden for c in plugin._raw_commands]):
+                continue
+            if f"- {plugin.name.split('.')[0]}" not in pluginssss:
+                pluginssss.append(f"- {plugin.name.split('.')[0]}")
         pages = []
         lines = [
             ">>> ```adoc",
@@ -252,10 +287,8 @@ class HelpCommand(BaseHelpCommand):
             "",
             "==== Categories ====",
         ]
-        for plugin in self.app._plugins.values():
-            if not plugin._raw_commands or all([c.hidden for c in plugin._raw_commands]):
-                continue
-            lines.append(f"- {plugin.name}")
+        for plugin in pluginssss:
+            lines.append(f"- {plugin}")
         lines.append("```")
 
         pages.append("\n".join(lines))
@@ -267,17 +300,19 @@ class HelpCommand(BaseHelpCommand):
         u_commands = await self._get_command_plugin_map(self.app._user_commands, context)
 
         plugin_pages: t.MutableMapping[t.Optional[plugins.Plugin], t.List[str]] = collections.defaultdict(list)
-        self._add_cmds_to_plugin_pages(plugin_pages, p_commands, "Prefix")
-        self._add_cmds_to_plugin_pages(plugin_pages, s_commands, "Slash")
-        self._add_cmds_to_plugin_pages(plugin_pages, m_commands, "Message")
-        self._add_cmds_to_plugin_pages(plugin_pages, u_commands, "User")
+        p_commands = self._add_cmds_to_plugin_pages(plugin_pages, p_commands, "Prefix")
+        s_commands = self._add_cmds_to_plugin_pages(plugin_pages, s_commands, "Slash")
+        m_commands = self._add_cmds_to_plugin_pages(plugin_pages, m_commands, "Message")
+        u_commands = self._add_cmds_to_plugin_pages(plugin_pages, u_commands, "User")
 
+        plugin_pages = self.merge([p_commands,s_commands,m_commands,u_commands])
         for plugin, page in plugin_pages.items():
             pages.append(
                 "\n".join(
                     [
                         ">>> ```adoc",
                         f"==== {plugin} ====",
+                        descriptions.get(plugin) or 'No description provided',
                         "",
                         *page,
                         "```",
@@ -360,35 +395,28 @@ class HelpCommand(BaseHelpCommand):
         lines.append("```")
         await context.respond("\n".join(lines))
 
-    async def send_plugin_help(self, context: context_.base.Context, plugin: plugins.Plugin) -> None:
+    async def send_plugin_help(self, context: context_.base.Context, obj: str) -> None:
+        p_commands = await self._get_command_plugin_map(self.app._prefix_commands, context)
+        s_commands = await self._get_command_plugin_map(self.app._slash_commands, context)
+        m_commands = await self._get_command_plugin_map(self.app._message_commands, context)
+        u_commands = await self._get_command_plugin_map(self.app._user_commands, context)
+
+        plugin_pages: t.MutableMapping[t.Optional[plugins.Plugin], t.List[str]] = collections.defaultdict(list)
+        p_commands = self._add_cmds_to_plugin_pages(plugin_pages, p_commands, "Prefix")
+        s_commands = self._add_cmds_to_plugin_pages(plugin_pages, s_commands, "Slash")
+        m_commands = self._add_cmds_to_plugin_pages(plugin_pages, m_commands, "Message")
+        u_commands = self._add_cmds_to_plugin_pages(plugin_pages, u_commands, "User")
+
+        plugin_pages = self.merge([p_commands, s_commands, m_commands, u_commands])
+
+        page = plugin_pages[obj]
+
         lines = [
             ">>> ```adoc",
             "==== Category Help ====",
-            f"{plugin.name} - {plugin.description or 'No description provided'}",
+            f"{obj} - {descriptions.get(obj) or 'No description provided'}",
             "",
+            *page,
+            "```",
         ]
-        p_cmds, s_cmds, m_cmds, u_cmds = [], [], [], []
-        all_commands = await filter_commands(plugin._all_commands, context)
-        for cmd in all_commands:
-            if isinstance(cmd, commands.prefix.PrefixCommand):
-                p_cmds.append(cmd)
-            elif isinstance(cmd, commands.slash.SlashCommand):
-                s_cmds.append(cmd)
-            elif isinstance(cmd, commands.message.MessageCommand):
-                m_cmds.append(cmd)
-            elif isinstance(cmd, commands.user.UserCommand):
-                u_cmds.append(cmd)
-
-        cmds: t.List[t.Tuple[t.Sequence[commands.base.Command], str]] = [
-            (p_cmds, "Prefix"),
-            (s_cmds, "Slash"),
-            (m_cmds, "Message"),
-            (u_cmds, "User"),
-        ]
-        for cmd_list, header in cmds:
-            if cmd_list:
-                lines.append(f"== {header} Commands")
-                for cmd in set(cmd_list):
-                    lines.append(f"- {cmd.name} - {cmd.description}")
-        lines.append("```")
         await context.respond("\n".join(lines))
