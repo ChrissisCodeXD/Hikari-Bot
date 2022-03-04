@@ -13,3 +13,5 @@ from discord import Webhook, AsyncWebhookAdapter
 import aiohttp
 import discord
 import traceback
+import json
+import mysql.connector
