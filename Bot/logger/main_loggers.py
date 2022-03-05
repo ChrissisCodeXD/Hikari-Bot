@@ -1,5 +1,8 @@
-import datetime, pytz, utils, discord, traceback, aiohttp, time, hikari
+import datetime, pytz, discord, traceback, aiohttp, time, hikari
 from discord import AsyncWebhookAdapter, Webhook
+from utils.time_wrapper import class_time_wrapper
+from utils.guild_icon import guild_icon
+
 
 class Logger():
 
@@ -7,7 +10,7 @@ class Logger():
         self.pytz = pytz.timezone('Europe/Berlin')
         self.time = datetime.datetime.now(tz=self.pytz)
 
-    @utils.time_wrapper
+    @class_time_wrapper
     async def send_error_log(self, err, cmd):
         embed = discord.Embed(
             title=f"Ein Fehler ist aufgetreten! {type(err)}",
@@ -27,7 +30,7 @@ class Logger():
 
         async with aiohttp.ClientSession() as session:
             webhook = Webhook.from_url(
-                'Webhook_URL',
+                'https://discord.com/api/webhooks/948907518179033150/ZPaTOsnOpjDg04LAYs-R0RuwgjU8DEdtZjuSR8gFDdynGSflb1DdrB6AmtwMLoQAkEv5',
                 adapter=AsyncWebhookAdapter(session))
 
             await webhook.send(
@@ -37,10 +40,8 @@ class Logger():
                 file=file,
             )
 
-
-
-    @utils.time_wrapper
-    async def send_guild_join(self,guild:hikari.GatewayGuild):
+    @class_time_wrapper
+    async def send_guild_join(self, guild: hikari.GatewayGuild):
         embed = discord.Embed(
             title=f"Bot ist einer Guild beigetreten! {guild.name}",
             color=discord.Colour.green(),
@@ -49,10 +50,7 @@ class Logger():
         embed.add_field(name="Members:", value=f"{guild.member_count}")
         embed.add_field(name=f"Guild ID:", value=f"{guild.id}")
         embed.add_field(name=f"Guild Icon hash:", value=f"{guild.icon_hash}")
-        embed.set_image(url=utils.guild_icon(guild))
-
-
-
+        embed.set_image(url=guild_icon(guild))
 
         async with aiohttp.ClientSession() as session:
             webhook = Webhook.from_url(
