@@ -1,33 +1,58 @@
 import hikari
+import lightbulb
 
 from imports import *
 
 _BotT = t.TypeVar("_BotT", bound="Bot")
 
+from Bot.DataBase.Connection import DBConnection
+from Bot.DataBase.prefix import DBPrefix
+from Bot.DataBase.warnsys import DBwarn
 from Bot import __version__, __prefix__, __beta__, __guilds__
 from utils import HelpCommand
+
 log = logging.getLogger(__name__)
 
 
-prefixes = {
-    "948904191559077888":"."
-}
+class Prefixes:
 
+    def __init__(self, bot):
+        self.bot = bot
+        self.prefixes = {}
+        self.prefixes = DBPrefix(self.bot.db).get_all_prefixes()
 
-def get_prefix(botApp,msg:hikari.Message):
+    def get_prefix(self, guild_id):
 
-    prfx = prefixes.get(str(msg.guild_id))
-    if prfx:
-        return prfx
-    else:
-        return "!"
+        if str(guild_id) not in self.prefixes:
+            result = DBPrefix(self.bot.db).get_all_prefixes()
+            if str(guild_id) not in result:
+                result[str(guild_id)] = "!"
+                DBPrefix(self.bot.db).insert_one(guild_id, "!")
+            self.prefixes = result
+        return self.prefixes.get(str(guild_id))
+
+    def get_prefixes(self, bot, msg):
+        return self.get_prefix(msg.guild_id)
+
+    def change_prefix(self, guild_id, prefix):
+        result = DBPrefix(self.bot.db).get_prefix_for_guild(guild_id)
+        if len(result) == 0:
+            DBPrefix(self.bot.db).insert_one(guild_id, prefix)
+        else:
+            DBPrefix(self.bot.db).update_one(guild_id, prefix)
+        result = DBPrefix(self.bot.db).get_all_prefixes()
+        self.prefixes = result
 
 
 class FirstBot(lightbulb.BotApp):
     def __init__(self):
+        self.log = log
+        self.db = DBConnection()
+        self._prefix__get_class = Prefixes(self)
         self._extensions = [p.stem for p in Path("./extensions/").glob("*.py")]
         self._extensions.extend([f"moderation.{p.stem}" for p in Path("./extensions/moderation/").glob("*.py")])
         self._extensions.extend([f"events.{p.stem}" for p in Path("./extensions/events/").glob("*.py")])
+        self._extensions.extend([f"settings.{p.stem}" for p in Path("./extensions/settings/").glob("*.py")])
         self.env = utils.env()
         self.token = token = self.env.get('TOKEN1')
         if __beta__ == True:
@@ -35,7 +60,7 @@ class FirstBot(lightbulb.BotApp):
             super().__init__(
                 token=token,
                 intents=hikari.Intents.ALL,
-                prefix=lightbulb.app.when_mentioned_or(get_prefix),
+                prefix=lightbulb.app.when_mentioned_or(self._prefix__get_class.get_prefixes),
                 default_enabled_guilds=__guilds__,
                 help_class=HelpCommand,
                 help_slash_command=True,
@@ -54,7 +79,7 @@ class FirstBot(lightbulb.BotApp):
             super().__init__(
                 token=token,
                 intents=hikari.Intents.ALL,
-                prefix=lightbulb.app.when_mentioned_or(get_prefix),
+                prefix=lightbulb.app.when_mentioned_or(self._prefix__get_class.get_prefixes),
                 ignore_bots=True,
                 help_class=HelpCommand,
                 help_slash_command=True,
@@ -83,11 +108,13 @@ class FirstBot(lightbulb.BotApp):
             )
         )
 
+
     async def on_starting(self: _BotT, event: hikari.StartingEvent) -> None:
         for ext in self._extensions:
             self.load_extensions(f"Bot.extensions.{ext}")
             log.info(f"'{ext}' extension loaded")
-
+        DBPrefix(self.db).create()
+        DBwarn(self.db).create()
 
         # cache = sake.redis.RedisCache(self, self, address="redis://127.0.0.1")
         # await cache.open()
@@ -105,9 +132,6 @@ class FirstBot(lightbulb.BotApp):
 
         # self.stdout_channel = await self.rest.fetch_channel(STDOUT_CHANNEL_ID)
         # await self.stdout_channel.send(f"Testing v{__version__} now online!")"""
-        log.info("Bot ready")
-        log.info(
-            f"Invite URL: https://discord.com/api/oauth2/authorize?client_id={self.get_me().id}&permissions=8&scope=bot%20applications.commands")
 
     async def on_stopping(self: _BotT, event: hikari.StoppingEvent) -> None:
         # This is gonna be fixed.
@@ -115,10 +139,7 @@ class FirstBot(lightbulb.BotApp):
         ...
 
     async def on_voice_state_update(self, event: hikari.VoiceStateUpdateEvent) -> None:
-        print(f"event || on_voice_state_update || triggerd")
+        return
 
     async def on_voice_server_update(self, event: hikari.VoiceServerUpdateEvent) -> None:
-        print(f"event || on_voice_server_update || triggerd")
-
-    async def error_handler(self, event: lightbulb.CommandErrorEvent):
-        print("event error")
+        return
