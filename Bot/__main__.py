@@ -1,4 +1,4 @@
-from FirstBot import FirstBot
+from Bot.bot import FirstBot
 import os
 
 if os.name != "nt":
@@ -8,4 +8,5 @@ if os.name != "nt":
 
 if __name__ == "__main__":
     bot = FirstBot()
+
     bot.run()
