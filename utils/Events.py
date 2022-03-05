@@ -47,3 +47,20 @@ class BotMentionedEvent(Event):
 
     original_event: hikari.MessageCreateEvent = attr.field()
     '''The Original Data of the Message Event'''
+
+
+@attr.define()
+class WarnEvent(Event):
+    app: RESTAware = attr.field()
+
+    author: User = attr.field()
+    '''The user who Warned someone.'''
+
+    user: User = attr.field()
+    '''The user who got warned '''
+
+    reason: str = attr.field()
+    '''The Reason Why he got warned'''
+
+    guild_id: int = attr.field()
+
