@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lightbulb. If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
-from Bot import __plugins__
+__plugins__ = ["moderation","settings"]
 
 __all__ = ["BaseHelpCommand", "HelpCommand", "filter_commands"]
 
@@ -243,10 +243,6 @@ class HelpCommand(BaseHelpCommand):
     ) -> None:
         temp = {}
         for plugin, cmds in cmds.items():
-            ### ToDo
-            #pages[plugin.name if plugin is not None else 'Uncategorised'].append((f"{plugin.description}\n" if plugin.description else "No description provided\n")
-            #            if plugin is not None
-            #            else "")
             tmp_pl_name = plugin.name.split(".")[0] if plugin is not None else 'Uncategorised'
             if not tmp_pl_name in temp: temp[plugin.name.split(".")[0] if plugin is not None else 'Uncategorised'] = {}
             if not header in temp[tmp_pl_name]: temp[tmp_pl_name][f"{header}"] = []
@@ -283,7 +279,7 @@ class HelpCommand(BaseHelpCommand):
             ">>> ```adoc",
             "==== Bot Help ====",
             "",
-            f"For more information: !help [command|category] ",
+            f"For more information: /help [command|category] ",
             "",
             "==== Categories ====",
         ]
