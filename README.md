@@ -7,4 +7,6 @@ Discord Bot(s) build with Hikari Discord Library. From My first Hikari bot to my
 ## ToDo
 - [x] Plugin Description bei dem Help Command adden
 - [x] Sort the Commands in Help Command by Sort of Command
-- [ ] replace every `__prefix__` with a function that gets the prefix and make that function
+- [x] replace every `__prefix__` with a function that gets the prefix and make that function
+- [ ] Functionality to Copy Servers
+- [ ] Do Punishments when someone got warned ... Times
