@@ -8,6 +8,9 @@ _BotT = t.TypeVar("_BotT", bound="Bot")
 from Bot.DataBase.Connection import DBConnection
 from Bot.DataBase.prefix import DBPrefix
 from Bot.DataBase.warnsys import DBwarn
+from Bot.DataBase.mutesys import DBMute
+from Bot.DataBase.settings import DBSettings
+from Bot.DataBase.erros import DBErros
 from Bot import __version__, __prefix__, __beta__, __guilds__
 from utils import HelpCommand
 
@@ -53,8 +56,10 @@ class FirstBot(lightbulb.BotApp):
         self._extensions.extend([f"moderation.{p.stem}" for p in Path("./extensions/moderation/").glob("*.py")])
         self._extensions.extend([f"events.{p.stem}" for p in Path("./extensions/events/").glob("*.py")])
         self._extensions.extend([f"settings.{p.stem}" for p in Path("./extensions/settings/").glob("*.py")])
+        self._extensions.extend([f"test.{p.stem}" for p in Path("./extensions/test/").glob("*.py")])
         self.env = utils.env()
         self.token = token = self.env.get('TOKEN1')
+        print(__guilds__)
         if __beta__ == True:
 
             super().__init__(
@@ -115,6 +120,9 @@ class FirstBot(lightbulb.BotApp):
             log.info(f"'{ext}' extension loaded")
         DBPrefix(self.db).create()
         DBwarn(self.db).create()
+        DBMute(self.db).create()
+        DBSettings(self.db).create()
+        DBErros(self.db).create()
 
         # cache = sake.redis.RedisCache(self, self, address="redis://127.0.0.1")
         # await cache.open()

@@ -30,11 +30,15 @@ async def kick(ctx: lightbulb.Context) -> None:
 
     if not flags:
         await ctx.respond(f"Kicking **{user}**")
-    await ctx.bot.rest.kick_member(user=user, guild=ctx.get_guild(), reason=res)
+    await kick_member(user,ctx.get_guild(),res)
     if not flags:
         await ctx.edit_last_response(f"Succesfully kicked `{user}` for `{res}`!")
     else:
         await ctx.respond(f"Succesfully kicked `{user}` for `{res}`!", flags=flags[0])
+
+
+async def kick_member(user,guild,res):
+    await kick_plugin.bot.rest.kick_member(user=user, guild=guild, reason=res)
 
 
 def load(bot):

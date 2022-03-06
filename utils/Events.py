@@ -5,6 +5,7 @@ from hikari.traits import RESTAware
 from hikari.events.base_events import Event
 from hikari.users import User
 from hikari.snowflakes import Snowflake
+from hikari.guilds import Guild
 
 @attr.define()
 class EveryoneMentionedEvent(Event):
@@ -63,4 +64,7 @@ class WarnEvent(Event):
     '''The Reason Why he got warned'''
 
     guild_id: int = attr.field()
+
+    guild: Guild = attr.field()
+
 

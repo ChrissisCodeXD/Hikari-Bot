@@ -1,7 +1,7 @@
 import discord
 from imports import *
 from Bot import __prefix__, Logger
-
+from Bot.DataBase.erros import DBErros
 err_plugin = lightbulb.Plugin("error_plugin")
 
 Log = Logger()
@@ -9,13 +9,7 @@ Log = Logger()
 
 @err_plugin.listener(lightbulb.CommandErrorEvent)
 async def on_error(event):
-    if isinstance(event.exception, lightbulb.CommandInvocationError):
-        await event.context.respond(
-            f"Something went wrong during invocation of command `{event.context.command.name}`.",
-            delete_after=3
-        )
-        await Log.send_error_log(event.exception, event.context.invoked_with)
-        raise event.exception
+
 
     exception = event.exception
 
@@ -61,7 +55,20 @@ async def on_error(event):
         return await event.context.respond(
             "You are missing one or more permissions required in order to run this command", delete_after=3)
 
-    await Log.send_error_log(event.exception, event.context.invoked_with)
+    err_id = None
+
+    err_id = utils.generate_id()
+    DBErros(event.app.db).add(
+        err_id,
+        event.context.invoked_with,
+        "".join(traceback.format_exception(event.exception))
+    )
+    await event.context.respond(
+        "Something went wrong. An error report has been created "
+        f"(ID: {err_id[:7]})."
+        "Please try again or join our support Server: https://discord.gg/5XzYqztxaA"
+    )
+    await Log.send_error_log(event.exception, event.context.invoked_with,err_id)
     raise (event.exception)
 
 

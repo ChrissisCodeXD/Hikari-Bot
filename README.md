@@ -9,4 +9,16 @@ Discord Bot(s) build with Hikari Discord Library. From My first Hikari bot to my
 - [x] Sort the Commands in Help Command by Sort of Command
 - [x] replace every `__prefix__` with a function that gets the prefix and make that function
 - [ ] Functionality to Copy Servers
-- [ ] Do Punishments when someone got warned ... Times
+- [x] Do Punishments when someone got warned ... Times
+- [ ] add more punishments when the system for that is finished.
+- [ ] finish Mute command
+- [ ] clear mute_settings when mute role gets deleted
+- [ ] 
+
+## Permissions
+- ban
+- kick
+- manage_roles
+- send_messages
+- view_channels
+- application_commands

@@ -1,4 +1,7 @@
 import datetime, pytz, discord, traceback, aiohttp, time, hikari
+import typing as t
+
+import lightbulb
 from discord import AsyncWebhookAdapter, Webhook
 from utils.time_wrapper import class_time_wrapper
 from utils.guild_icon import guild_icon
@@ -11,7 +14,7 @@ class Logger():
         self.time = datetime.datetime.now(tz=self.pytz)
 
     @class_time_wrapper
-    async def send_error_log(self, err, cmd):
+    async def send_error_log(self, err, cmd,id):
         embed = discord.Embed(
             title=f"Ein Fehler ist aufgetreten! {type(err)}",
             description=err,
@@ -20,7 +23,8 @@ class Logger():
         )
         embed.add_field(name="Command:", value=f"{cmd}")
         embed.add_field(name=f"Error:", value=f"{err}")
-
+        if id:
+            embed.add_field(name=f"ID:",value=str(id))
         trc_list = [i for i in traceback.TracebackException.from_exception(err).format()]
         filename = f'./extensions/err_logs/errorlog_{cmd}_{int(time.time())}.txt'
         with open(filename, 'w') as file:
@@ -62,3 +66,26 @@ class Logger():
                 avatar_url="https://cdn-icons.flaticon.com/png/512/2163/premium/2163271.png?token=exp=1646317406~hmac=435f9ab9a4b08285d23c342b6fbcbf30",
                 embed=embed,
             )
+
+    @class_time_wrapper
+    async def send_on_start(self, bot: lightbulb.BotApp):
+        embed = discord.Embed(
+            title=f"Bot ist gestartet!",
+            color=discord.Colour.green(),
+            timestamp=self.time,
+        )
+        embed.add_field(name="Members:", value=f"{len(bot.cache.get_members_view())}")
+        embed.add_field(name=f"Guilds:", value=f"{len(bot.cache.get_available_guilds_view())}")
+        embed.add_field(name=f"Ping:", value=f"{bot.heartbeat_latency}")
+        embed.set_image(url=bot.application.make_icon_url())
+
+        async with aiohttp.ClientSession() as session:
+            webhook = Webhook.from_url(
+                'https://discord.com/api/webhooks/950057704381100062/5L-dLg13izd4gXEMF-m1B8GYapxlhv4clKvKFstkqcjhhnZD6Zf_ZPIFRRsk9JVoaJGY',
+                adapter=AsyncWebhookAdapter(session))
+            await webhook.send(
+                username='Info-Log',
+                avatar_url="https://cdn-icons.flaticon.com/png/512/2163/premium/2163271.png?token=exp=1646317406~hmac=435f9ab9a4b08285d23c342b6fbcbf30",
+                embed=embed,
+            )
+
