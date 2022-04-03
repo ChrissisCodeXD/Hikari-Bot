@@ -12,14 +12,20 @@ clear_plugin.add_checks(
 
 
 @clear_plugin.command()
+@lightbulb.check_exempt(utils.mod_check)
 @lightbulb.option("messages", "Messages to delete", int, required=True)
+@lightbulb.option("user", "User to delete messages from", hikari.Member, required=False)
 @lightbulb.command("clear", "Clears the Current Channel")
 @lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def clear(ctx: lightbulb.Context) -> None:
+    user = ctx.options.user if ctx.options.user else None
     channel: hikari.GuildTextChannel = ctx.get_channel()
-    await utils.purge(channel.id, ctx.options.messages, clear_plugin.bot)
-    await ctx.respond(f"Deleted {ctx.options.messages if ctx.options.messages <= 100 else 100} Messages!",
-                      delete_after=4)
+    deleted = await utils.purge(channel.id, ctx.options.messages, clear_plugin.bot,user)
+    if ctx.interaction:
+        await ctx.respond(f"Deleted {deleted if deleted <= 100 else 100} Messages!",
+                      flags=hikari.MessageFlag.EPHEMERAL)
+    else:
+        await ctx.respond(f"Deleted {deleted if deleted <= 100 else 100} Messages!",delete_after=5)
 
 
 def load(bot):

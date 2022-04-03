@@ -1,6 +1,6 @@
 import discord
 from imports import *
-from Bot import __prefix__, Logger
+from Bot import __prefix__, Logger, __testing__
 from Bot.DataBase.erros import DBErros
 err_plugin = lightbulb.Plugin("error_plugin")
 
@@ -63,13 +63,27 @@ async def on_error(event):
         event.context.invoked_with,
         "".join(traceback.format_exception(event.exception))
     )
-    await event.context.respond(
-        "Something went wrong. An error report has been created "
-        f"(ID: {err_id[:7]})."
-        "Please try again or join our support Server: https://discord.gg/5XzYqztxaA"
+
+    embed = hikari.Embed(
+        title=f"Something went wrong. An error report has been created!",
+        description=f"(ID: {err_id[:7]}).\nPlease try again or join our support [Server](https://discord.gg/5XzYqztxaA)",
+        color=utils.Color.red().__str__(),
+        timestamp=utils.get_time()
     )
-    await Log.send_error_log(event.exception, event.context.invoked_with,err_id)
-    raise (event.exception)
+    if event.context.interaction:
+        pass
+        #await event.context.respond(
+        #    embed=embed,
+        #    flags=hikari.MessageFlag.EPHEMERAL
+        #)
+    else:
+        await event.context.respond(
+            embed=embed,
+            delete_after=15
+        )
+    #await Log.send_error_log(event.exception, event.context.invoked_with,err_id)
+    if __testing__:
+        raise (event.exception)
 
 
 def load(bot):

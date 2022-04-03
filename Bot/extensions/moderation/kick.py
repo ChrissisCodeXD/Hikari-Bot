@@ -12,6 +12,7 @@ kick_plugin.add_checks(
 
 
 @kick_plugin.command()
+@lightbulb.check_exempt(utils.mod_check)
 @lightbulb.option("reason", "The Reason for kicking the Member", str, required=False)
 @lightbulb.option("member", "Kicks the given Member", hikari.Member, required=True)
 @lightbulb.command("kick", "Kicks the given Member")

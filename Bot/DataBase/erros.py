@@ -11,7 +11,7 @@ class DBErros:
     def create(self):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
-        query = f"CREATE TABLE IF NOT EXISTS `errors` (id int auto_increment,err_id BIGINT,err_cmd varchar(255),err_text varchar(255), PRIMARY KEY (id));"
+        query = f"CREATE TABLE IF NOT EXISTS `errors` (id int auto_increment,err_id LONGTEXT,err_cmd varchar(255),err_text LONGTEXT, PRIMARY KEY (id));"
         mycursor.execute(query)
         mycursor.close()
         mydb.close()
@@ -20,7 +20,7 @@ class DBErros:
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"INSERT INTO errors (err_id, err_cmd,err_text)VALUES (%s, %s,%s)"
-        val = (int(err_id), str(cmd),str(trc))
+        val = (err_id, str(cmd),str(trc))
         mycursor.execute(query, val)
         mydb.commit()
         mycursor.close()

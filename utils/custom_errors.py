@@ -1,0 +1,2 @@
+class WrongDuration:
+    pass

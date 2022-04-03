@@ -15,3 +15,7 @@ import discord
 import traceback
 import json
 import mysql.connector
+import re
+import asyncio
+import math
+import coc

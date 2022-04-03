@@ -1,4 +1,4 @@
-from imports import *
+import lightbulb
 from Bot.DataBase.settings import DBSettings
 
 
@@ -13,6 +13,8 @@ async def mod_check(ctx: lightbulb.Context):
         if int(i) in mod_roles:
             return True
     return False
+
+
 
 
 

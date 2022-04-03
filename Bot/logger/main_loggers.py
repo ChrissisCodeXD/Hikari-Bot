@@ -58,7 +58,7 @@ class Logger():
 
         async with aiohttp.ClientSession() as session:
             webhook = Webhook.from_url(
-                'https://discord.com/api/webhooks/948944824357249054/VtpbLMKzFVgQf41OyXxMfaGgM28VbV8JMdlLx-ILQuheNFp1eiVb83snM-usBiKtCfJd',
+                'https://discord.com/api/webhooks/950086486273966271/qO2e5TWqwTlryIm69GUi7D9Et2iZ0VnU3m8-XpC7k_hc5-iszH_D5F4lt01OhhSTuzfY',
                 adapter=AsyncWebhookAdapter(session))
 
             await webhook.send(
@@ -77,11 +77,12 @@ class Logger():
         embed.add_field(name="Members:", value=f"{len(bot.cache.get_members_view())}")
         embed.add_field(name=f"Guilds:", value=f"{len(bot.cache.get_available_guilds_view())}")
         embed.add_field(name=f"Ping:", value=f"{bot.heartbeat_latency}")
-        embed.set_image(url=bot.application.make_icon_url())
+        if bot.application.make_icon_url():
+            embed.set_thumbnail(url=bot.application.make_icon_url())
 
         async with aiohttp.ClientSession() as session:
             webhook = Webhook.from_url(
-                'https://discord.com/api/webhooks/950057704381100062/5L-dLg13izd4gXEMF-m1B8GYapxlhv4clKvKFstkqcjhhnZD6Zf_ZPIFRRsk9JVoaJGY',
+                'https://discord.com/api/webhooks/951931756615991469/N2DkFgTmS_UeRivqBHIFiR3GZ1duLRDrQE-Tj4RZ09bIz1NgTGw8h0i9wcLgp9aMuc4w',
                 adapter=AsyncWebhookAdapter(session))
             await webhook.send(
                 username='Info-Log',
