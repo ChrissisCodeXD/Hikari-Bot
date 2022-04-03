@@ -7,6 +7,24 @@ from hikari.users import User
 from hikari.snowflakes import Snowflake
 from hikari.guilds import Guild
 
+
+@attr.define()
+class OnLinkProtectMessageCreate(Event):
+    """
+    This event is fired when a message is created, that has to be checked for links
+    """
+    app: RESTAware = attr.field()
+
+    message:hikari.Message = attr.field()
+
+    original_event:hikari.events.GuildMessageCreateEvent = attr.field()
+
+    settings: dict = attr.field()
+
+
+
+
+
 @attr.define()
 class EveryoneMentionedEvent(Event):
     app: RESTAware = attr.field()

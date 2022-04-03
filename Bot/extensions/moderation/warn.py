@@ -81,7 +81,7 @@ async def warn(ctx: lightbulb.Context) -> None:
         guild = ctx.get_guild()
     )
 
-    warn_plugin.bot.dispatch(event)
+    await warn_plugin.bot.dispatch(event)
 
 
 

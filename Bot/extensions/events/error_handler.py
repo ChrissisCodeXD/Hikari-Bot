@@ -58,17 +58,17 @@ async def on_error(event):
     err_id = None
 
     err_id = utils.generate_id()
-    DBErros(event.app.db).add(
-        err_id,
-        event.context.invoked_with,
-        "".join(traceback.format_exception(event.exception))
-    )
+    #DBErros(event.app.db).add(
+    #    err_id,
+    #    event.context.invoked_with,
+    #    "".join(traceback.format_exception(event.exception))
+    #)
     await event.context.respond(
         "Something went wrong. An error report has been created "
         f"(ID: {err_id[:7]})."
         "Please try again or join our support Server: https://discord.gg/5XzYqztxaA"
     )
-    await Log.send_error_log(event.exception, event.context.invoked_with,err_id)
+    #await Log.send_error_log(event.exception, event.context.invoked_with,err_id)
     raise (event.exception)
 
 
