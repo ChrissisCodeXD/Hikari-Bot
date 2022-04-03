@@ -6,7 +6,7 @@ class DBConnection:
 
     def __init__(self):
         # if self.poolConnection is None:
-        with open("../data/config.json", "r") as config:
+        with open("./DataBase/config.json", "r") as config:
             data = json.load(config)
 
         self.MySQLHost = data["MySQLHost"]
