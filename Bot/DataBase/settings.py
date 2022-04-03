@@ -16,7 +16,7 @@ class DBSettings:
         mycursor.close()
         mydb.close()
 
-    def get_settings(self,guild_id):
+    def get_settings(self, guild_id):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"SELECT * FROM settings WHERE guild_id = %s;"
@@ -30,7 +30,7 @@ class DBSettings:
             toret[str(guild_id)] = [moderator_roles]
         return toret
 
-    def add(self,guild_id):
+    def add(self, guild_id):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"INSERT INTO settings (guild_id, moderator_roles)VALUES ( %s, %s)"

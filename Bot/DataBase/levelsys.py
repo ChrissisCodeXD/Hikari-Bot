@@ -1,9 +1,11 @@
 from imports import *
 
 from Bot.DataBase.Connection import DBConnection
+
+
 class DBLevel:
 
-    def __init__(self,dbconnection):
+    def __init__(self, dbconnection):
         self.dbConnection = dbconnection
 
     def create(self):
@@ -15,23 +17,21 @@ class DBLevel:
         mydb.close()
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
-        query = f"CREATE TABLE IF NOT EXISTS `levelguilds` (ison TINYINT,guildid BIGINT,channels LONGTEXT,xpmult DECIMAL,doubleexp TINYINT,PRIMARY KEY (guildid));"
+        query = f"CREATE TABLE IF NOT EXISTS `levelguilds` (ison TINYINT,guildid BIGINT,channels LONGTEXT,xpmult DECIMAL,doubleexp TINYINT, lvlmsg Longtext,PRIMARY KEY (guildid));"
         mycursor.execute(query)
         mycursor.close()
         mydb.close()
 
-
-    def add(self, author: int, exp: int, guild: int,username:str,avatar_url:str):
+    def add(self, author: int, exp: int, guild: int, username: str, avatar_url: str):
         """Adds a User to Databse"""
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"INSERT INTO `levelsys` (`user_id`, `exp`,`guild_id`,`lvl`,`name`,`avatar_url`) VALUES (%s, %s, %s,%s,%s,%s);"
-        val = (int(author), exp, int(guild), 0,username,avatar_url)
+        val = (int(author), exp, int(guild), 0, username, avatar_url)
         mycursor.execute(query, val)
         mydb.commit()
         mycursor.close()
         mydb.close()
-
 
     def get_settings(self, guildid: int) -> dict:
         mydb = self.dbConnection.getConnection()
@@ -48,12 +48,12 @@ class DBLevel:
             toreturn["channels"] = json.loads(result[0][2])
             toreturn["xpmult"] = result[0][3]
             toreturn["doubleexp"] = result[0][4]
+            toreturn["lvlmsg"] = result[0][5]
             return toreturn
-        else : return None
+        else:
+            return None
 
-
-    def update_settings(self,guild_id, setting,value):
-        print(value)
+    def update_settings(self, guild_id, setting, value):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"UPDATE levelguilds SET {setting} = %s WHERE guildid = %s;"
@@ -63,8 +63,7 @@ class DBLevel:
         mycursor.close()
         mydb.close()
 
-
-    def addtoguilds(self,guild_id):
+    def addtoguilds(self, guild_id):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"INSERT INTO `levelguilds` (`ison`, `guildid`,`channels`) VALUES ( %s, %s,%s);"
@@ -73,7 +72,6 @@ class DBLevel:
         mydb.commit()
         mycursor.close()
         mydb.close()
-
 
     def isindatabase(self, author: int, guild: int):
         """checks if user is in Database"""
@@ -90,7 +88,7 @@ class DBLevel:
         else:
             return False
 
-    def isindatabaseguilds(self,guild: int):
+    def isindatabaseguilds(self, guild: int):
         """checks if user is in Database"""
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
@@ -103,7 +101,6 @@ class DBLevel:
             return result[0]
         else:
             return False
-
 
     def addEXP(self, author: int, guild: int, exp: int):
         mydb = self.dbConnection.getConnection()
@@ -167,7 +164,7 @@ class DBLevel:
         mycursor.close()
         mydb.close()
         if len(result) > 0:
-            return [result[0][0],result[0][1],json.loads(result[0][2])]
+            return [result[0][0], result[0][1], json.loads(result[0][2]), result[0][3], result[0][4], result[0][5]]
         else:
             return False
 
@@ -226,4 +223,3 @@ class DBLevel:
         else:
             self.addtoguilds(guildid)
             self.remove_lvlup_channels(guildid, channelid)
-

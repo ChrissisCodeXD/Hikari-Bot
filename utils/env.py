@@ -1,11 +1,12 @@
-
 class CouldNotFindEnv(Exception):
     pass
 
+
 class raw_env:
-    def __init__(self,name,value):
+    def __init__(self, name, value):
         self.name = name
         self.value = value
+
 
 class env:
 
@@ -16,10 +17,9 @@ class env:
                 if line.startswith('#') or not line.strip():
                     continue
                 key, value = line.strip().split('=', 1)
-                self.env.append(raw_env(key,value))  # Save to a list
+                self.env.append(raw_env(key, value))  # Save to a list
 
-
-    def get(self,xyz):
+    def get(self, xyz):
         toret = []
         for i in self.env:
             if i.name == xyz:
@@ -32,5 +32,3 @@ class env:
             toret = toret[0]
 
         return toret
-
-

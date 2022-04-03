@@ -1,6 +1,7 @@
 from imports import *
 from Bot.DataBase.LinkSystem import DBLink
 
+
 class LinkFilter:
 
     def __init__(self, app, msg: hikari.Message):
@@ -88,15 +89,15 @@ class LinkFilter:
 
     async def is_discord(self):
         regex = "(https?:\/\/)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com\/invite)\/.+[a-z]"
-        if re.search(regex,self.msg.content):
+        if re.search(regex, self.msg.content):
             await self.case("discord")
 
     async def is_gif(self):
         regex = "(?:([^:/?#]+):)?(?://([^/?#]*))?([^?#]*\.(?:gif))(?:\?([^#]*))?(?:#(.*))?"
-        if re.search(regex,self.msg.content):
+        if re.search(regex, self.msg.content):
             await self.case("gif")
 
     async def is_link(self):
         regex = "(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})"
-        if re.search(regex,self.msg.content):
+        if re.search(regex, self.msg.content):
             await self.case("link")

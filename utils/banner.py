@@ -6,8 +6,8 @@ from PIL import ImageFont, ImageDraw, ImageFilter, ImageSequence, Image
 import discord
 import requests
 
-async def get_banner(member,guild,background):
 
+async def get_banner(member, guild, background):
     response = requests.get(background)
 
     background = Image.open(BytesIO(response.content)).convert('RGBA').resize((1024, 500), Image.ANTIALIAS)
@@ -64,10 +64,10 @@ async def get_banner(member,guild,background):
 
         avatar.close()
 
-        #try:
-            #os.remove(f"../data/Images/Cache/avatar_{member.id}.gif")
-        #except:
-            #pass
+        # try:
+        # os.remove(f"../data/Images/Cache/avatar_{member.id}.gif")
+        # except:
+        # pass
 
     else:
 
@@ -82,6 +82,5 @@ async def get_banner(member,guild,background):
         background.paste(new_avatar, (387, 30), mask)
 
         background.save(f"../data/Images/Cache/{filename}")
-
 
     return f"../data/Images/Cache/{filename}"

@@ -127,5 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-!/data/config.json
+!/Bot/DataBase/config.json
 !/utils/config.env

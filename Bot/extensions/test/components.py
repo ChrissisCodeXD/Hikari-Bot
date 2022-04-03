@@ -5,8 +5,6 @@ import lightbulb
 
 from hikari.api import ActionRowBuilder
 
-
-
 COLORS: t.Mapping[str, t.Tuple[int, str]] = {
     "Red": (
         0xFF0000,
@@ -68,10 +66,10 @@ async def generate_rows(bot: lightbulb.BotApp) -> t.Iterable[ActionRowBuilder]:
                 # Set the buttons custom ID to the label.
                 label,
             )
-            # Set the actual label.
-            .set_label(label)
-            # Finally add the button to the container.
-            .add_to_container()
+                # Set the actual label.
+                .set_label(label)
+                # Finally add the button to the container.
+                .add_to_container()
         )
 
     # Append the second action row to rows after the for loop.
@@ -82,9 +80,9 @@ async def generate_rows(bot: lightbulb.BotApp) -> t.Iterable[ActionRowBuilder]:
 
 
 async def handle_responses(
-    bot: lightbulb.BotApp,
-    author: hikari.User,
-    message: hikari.Message,
+        bot: lightbulb.BotApp,
+        author: hikari.User,
+        message: hikari.Message,
 ) -> None:
     """Watches for events, and handles responding to them."""
 
@@ -92,15 +90,15 @@ async def handle_responses(
     # with our buttons, we stop watching after 120 seconds (2 mins) of
     # inactivity.
     with bot.stream(hikari.InteractionCreateEvent, 120).filter(
-        # Here we filter out events we don't care about.
-        lambda e: (
-            # A component interaction is a button interaction.
-            isinstance(e.interaction, hikari.ComponentInteraction)
-            # Make sure the command author hit the button.
-            and e.interaction.user == author
-            # Make sure the button was attached to our message.
-            and e.interaction.message == message
-        )
+            # Here we filter out events we don't care about.
+            lambda e: (
+                    # A component interaction is a button interaction.
+                    isinstance(e.interaction, hikari.ComponentInteraction)
+                    # Make sure the command author hit the button.
+                    and e.interaction.user == author
+                    # Make sure the button was attached to our message.
+                    and e.interaction.message == message
+            )
     ) as stream:
         async for event in stream:
             # If we made it through the filter, the user has clicked
@@ -182,6 +180,7 @@ async def rgb_command(ctx: lightbulb.Context) -> None:
 
     # Handle interaction responses to the initial message.
     await handle_responses(ctx.bot, ctx.author, message)
+
 
 def load(bot):
     bot.add_plugin(comp_test_plugin)

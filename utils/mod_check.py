@@ -2,7 +2,6 @@ import lightbulb
 from Bot.DataBase.settings import DBSettings
 
 
-
 async def mod_check(ctx: lightbulb.Context):
     result = DBSettings(ctx.app.db).get_settings(ctx.guild_id)
     if not result: DBSettings(ctx.app.db).add(ctx.guild_id)
@@ -25,8 +24,3 @@ async def mod_check_without_ctx(bot, guild_id, member):
         if int(i) in mod_roles:
             return True
     return False
-
-
-
-
-

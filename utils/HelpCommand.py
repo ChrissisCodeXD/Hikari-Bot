@@ -16,10 +16,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lightbulb. If not, see <https://www.gnu.org/licenses/>.
 from __future__ import annotations
-__plugins__ = ["moderation","settings"]
+
+__plugins__ = ["moderation", "settings"]
 
 __all__ = ["BaseHelpCommand", "HelpCommand", "filter_commands"]
-
 
 descriptions = {
     "moderation": f"The Plugin with all of the Moderation Commands. Helps you moderate your Server!",
@@ -41,7 +41,7 @@ if t.TYPE_CHECKING:
 
 
 async def filter_commands(
-    cmds: t.Sequence[commands.base.Command], context: context_.base.Context
+        cmds: t.Sequence[commands.base.Command], context: context_.base.Context
 ) -> t.Sequence[commands.base.Command]:
     """
     Evaluates the checks for each command provided, removing any that the checks fail for. This effectively
@@ -132,8 +132,6 @@ class BaseHelpCommand(abc.ABC):
             await self.send_command_help(context, u_cmd)
             return
 
-
-
         if obj in __plugins__:
             await self.send_plugin_help(context, obj)
             return
@@ -170,14 +168,14 @@ class BaseHelpCommand(abc.ABC):
 
     @abc.abstractmethod
     async def send_group_help(
-        self,
-        context: context_.base.Context,
-        group: t.Union[
-            commands.prefix.PrefixCommandGroup,
-            commands.prefix.PrefixSubGroup,
-            commands.slash.SlashCommandGroup,
-            commands.slash.SlashSubGroup,
-        ],
+            self,
+            context: context_.base.Context,
+            group: t.Union[
+                commands.prefix.PrefixCommandGroup,
+                commands.prefix.PrefixSubGroup,
+                commands.slash.SlashCommandGroup,
+                commands.slash.SlashSubGroup,
+            ],
     ) -> None:
         """
         Sends a help message for the given command group.
@@ -227,7 +225,7 @@ class HelpCommand(BaseHelpCommand):
 
     @staticmethod
     async def _get_command_plugin_map(
-        cmd_map: t.Mapping[str, commands.base.Command], context: context_.base.Context
+            cmd_map: t.Mapping[str, commands.base.Command], context: context_.base.Context
     ) -> t.Dict[t.Optional[plugins.Plugin], t.List[commands.base.Command]]:
         out = collections.defaultdict(list)
         for cmd in cmd_map.values():
@@ -237,9 +235,9 @@ class HelpCommand(BaseHelpCommand):
 
     @staticmethod
     def _add_cmds_to_plugin_pages(
-        pages: t.MutableMapping[t.Optional[plugins.Plugin], t.List[str]],
-        cmds: t.Mapping[t.Optional[plugins.Plugin], t.List[commands.base.Command]],
-        header: str,
+            pages: t.MutableMapping[t.Optional[plugins.Plugin], t.List[str]],
+            cmds: t.Mapping[t.Optional[plugins.Plugin], t.List[commands.base.Command]],
+            header: str,
     ) -> None:
         temp = {}
         for plugin, cmds in cmds.items():
@@ -252,9 +250,10 @@ class HelpCommand(BaseHelpCommand):
             for cmd in set(cmds):
                 pages[tmp_pl_name].append(f"- {cmd.name} - {cmd.description}")
         return temp
-        #for plugin, cmds in temp.items():
+        # for plugin, cmds in temp.items():
         #    print(f"PLUGIN!!!! {plugin}")
         #    print(f"CMDS!!!! {cmds}")
+
     @staticmethod
     def merge(tomrg):
         toret = {}
@@ -301,7 +300,7 @@ class HelpCommand(BaseHelpCommand):
         m_commands = self._add_cmds_to_plugin_pages(plugin_pages, m_commands, "Message")
         u_commands = self._add_cmds_to_plugin_pages(plugin_pages, u_commands, "User")
 
-        plugin_pages = self.merge([p_commands,s_commands,m_commands,u_commands])
+        plugin_pages = self.merge([p_commands, s_commands, m_commands, u_commands])
         for plugin, page in plugin_pages.items():
             pages.append(
                 "\n".join(
@@ -342,14 +341,14 @@ class HelpCommand(BaseHelpCommand):
         await context.respond("\n".join(lines))
 
     async def send_group_help(
-        self,
-        context: context_.base.Context,
-        group: t.Union[
-            commands.prefix.PrefixCommandGroup,
-            commands.prefix.PrefixSubGroup,
-            commands.slash.SlashCommandGroup,
-            commands.slash.SlashSubGroup,
-        ],
+            self,
+            context: context_.base.Context,
+            group: t.Union[
+                commands.prefix.PrefixCommandGroup,
+                commands.prefix.PrefixSubGroup,
+                commands.slash.SlashCommandGroup,
+                commands.slash.SlashSubGroup,
+            ],
     ) -> None:
         long_help = group.get_help(context)
         prefix = (

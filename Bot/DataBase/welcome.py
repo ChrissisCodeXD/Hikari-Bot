@@ -8,8 +8,7 @@ class DBWelcomeChannel:
     def __init__(self, dbConnection):
         self.dbConnection = dbConnection
 
-
-    def indata(self,guild_id):
+    def indata(self, guild_id):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"SELECT * FROM welcome_channels WHERE guild_id = %s;"
@@ -19,18 +18,17 @@ class DBWelcomeChannel:
         mydb.close()
         return result if result else False
 
-
-    def is_channel_indb(self,guild_id,welcome_channel):
+    def is_channel_indb(self, guild_id, welcome_channel):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"SELECT welcome_channel FROM welcome_channels WHERE guild_id = %s AND welcome_channel = %s;"
-        mycursor.execute(query, [int(guild_id),int(welcome_channel)])
+        mycursor.execute(query, [int(guild_id), int(welcome_channel)])
         result = mycursor.fetchall()
         mycursor.close()
         mydb.close()
         return True if result else False
 
-    def get_channels(self,guild_id):
+    def get_channels(self, guild_id):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"SELECT welcome_channel FROM welcome_channels WHERE guild_id = %s;"
@@ -40,24 +38,25 @@ class DBWelcomeChannel:
         mydb.close()
         return result if result else False
 
-    def remove_channel(self,guild_id,welcome_channel):
+    def remove_channel(self, guild_id, welcome_channel):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"DELETE FROM welcome_channels WHERE guild_id = %s AND welcome_channel = %s;"
-        mycursor.execute(query, [int(guild_id),int(welcome_channel)])
+        mycursor.execute(query, [int(guild_id), int(welcome_channel)])
         mydb.commit()
         mycursor.close()
         mydb.close()
 
-    def add_channel(self,guild_id,welcome_channel,welcome_message,banner:int=0,banner_background:str=None,banner_color:str=None):
+    def add_channel(self, guild_id, welcome_channel, welcome_message, banner: int = 0, banner_background: str = None,
+                    banner_color: str = None):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = "INSERT INTO welcome_channels (guild_id,welcome_channel,welcome_message,banner,banner_background,banner_color) VALUES (%s,%s,%s,%s,%s,%s);"
-        mycursor.execute(query, [int(guild_id),int(welcome_channel),welcome_message,banner,banner_background,banner_color])
+        mycursor.execute(query, [int(guild_id), int(welcome_channel), welcome_message, banner, banner_background,
+                                 banner_color])
         mydb.commit()
         mycursor.close()
         mydb.close()
-
 
     def create(self):
         mydb = self.dbConnection.getConnection()
@@ -67,9 +66,10 @@ class DBWelcomeChannel:
         mycursor.close()
         mydb.close()
 
+
 class DBWelcomeDM:
 
-    def __init__(self,dbConnection):
+    def __init__(self, dbConnection):
         self.dbConnection = dbConnection
 
     def create(self):
@@ -80,4 +80,4 @@ class DBWelcomeDM:
         mycursor.close()
         mydb.close()
 
-    #TODO: Add DM welcome message
+    # TODO: Add DM welcome message

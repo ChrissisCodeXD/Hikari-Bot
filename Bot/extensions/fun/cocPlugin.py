@@ -22,9 +22,8 @@ coc_client = coc.login("schwarzlichtampel@gmail.com", "Disco2007!",
 logging.basicConfig(level=logging.ERROR)
 
 
-
 @coc_plugin.listener(hikari.InteractionCreateEvent)
-async def on_interaction(event:hikari.InteractionCreateEvent):
+async def on_interaction(event: hikari.InteractionCreateEvent):
     if not isinstance(event.interaction, hikari.ComponentInteraction):
         return
     else:
@@ -39,14 +38,14 @@ async def on_interaction(event:hikari.InteractionCreateEvent):
         role = guild.get_role(952885313154482188)
         await auth.add_role(role=role, reason=f"Rules Accepted")
 
-
         embed = hikari.Embed(
-            title = f"✅ Accepted the Rules!",
+            title=f"✅ Accepted the Rules!",
             color=utils.Color.green().__str__(),
             timestamp=utils.get_time()
         )
 
-        await i.create_initial_response(hikari.ResponseType.MESSAGE_CREATE,embed=embed,flags=hikari.MessageFlag.EPHEMERAL)
+        await i.create_initial_response(hikari.ResponseType.MESSAGE_CREATE, embed=embed,
+                                        flags=hikari.MessageFlag.EPHEMERAL)
     else:
         embed = hikari.Embed(
             title=f"❌ Already Accepted the Rules",
@@ -56,8 +55,6 @@ async def on_interaction(event:hikari.InteractionCreateEvent):
 
         await i.create_initial_response(hikari.ResponseType.MESSAGE_CREATE, embed=embed,
                                         flags=hikari.MessageFlag.EPHEMERAL)
-
-
 
 
 @coc_plugin.command()
@@ -78,7 +75,7 @@ async def send_rules(ctx):
             .set_image("https://cdn.discordapp.com/attachments/899676897120763914/940777404601860126/unknown.png"),
         hikari.Embed(title="§4 Verhalten",
                      color=8572125,
-                     description= "> :small_blue_diamond: Sarkastische Äußerungen sollten als sarkastisch gekennzeichnet werden, damit Missverständnisse > vermieden werden können.\n\n> :small_blue_diamond: Provokante, rechts- und linksextremistische sowie beleidigende Aussagen sind nicht zu äußern!\n\n> :small_blue_diamond: Das wiederholen von Nachrichten (Spamming) ist untersagt!\n\n> :small_blue_diamond: Echtgeldhandel oder drgl. ist verboten!")
+                     description="> :small_blue_diamond: Sarkastische Äußerungen sollten als sarkastisch gekennzeichnet werden, damit Missverständnisse > vermieden werden können.\n\n> :small_blue_diamond: Provokante, rechts- und linksextremistische sowie beleidigende Aussagen sind nicht zu äußern!\n\n> :small_blue_diamond: Das wiederholen von Nachrichten (Spamming) ist untersagt!\n\n> :small_blue_diamond: Echtgeldhandel oder drgl. ist verboten!")
             .set_image("https://cdn.discordapp.com/attachments/899676897120763914/940777404601860126/unknown.png")
     ]
     actionrow = ctx.bot.rest.build_action_row()
@@ -86,7 +83,8 @@ async def send_rules(ctx):
         hikari.messages.ButtonStyle.SUCCESS,
         "accept-rules"
     ).set_label(f"Accept").set_emoji("✅").add_to_container()
-    await ctx.respond(embeds=embeds,component=actionrow)
+    await ctx.respond(embeds=embeds, component=actionrow)
+
 
 @coc_plugin.command()
 @lightbulb.add_checks(lightbulb.checks.owner_only)
@@ -94,13 +92,14 @@ async def send_rules(ctx):
 @lightbulb.implements(lightbulb.PrefixCommand)
 async def send_rules2(ctx):
     if not ctx.interaction: await ctx.event.message.delete()
-    embeds = [hikari.Embed(title="Aktzeptiere die Regeln hier ⬇️",color=8572125)]
+    embeds = [hikari.Embed(title="Aktzeptiere die Regeln hier ⬇️", color=8572125)]
     actionrow = ctx.bot.rest.build_action_row()
     actionrow.add_button(
         hikari.messages.ButtonStyle.SUCCESS,
         "accept-rules"
     ).set_label(f"Accept").set_emoji("✅").add_to_container()
     await ctx.respond(embeds=embeds, component=actionrow)
+
 
 @coc_client.event
 @coc.ClanEvents.member_join(tags=clan_tags)
@@ -176,10 +175,7 @@ async def clan_member_versus_trophies_changed(old_member, new_member):
 @coc_client.event
 @coc.ClientEvents.event_error()
 async def on_event_error(exception):
-    if isinstance(exception, coc.PrivateWarLog):
-        return  # lets ignore private war log errors
-    print("Uh oh! Something went wrong in coc.py events... printing traceback for you.")
-    traceback.print_exc()
+    return
 
 
 @coc_plugin.command()
@@ -423,7 +419,7 @@ async def coc_tasks():
         pass
 
 
-#coc_tasks.start()
+# coc_tasks.start()
 
 
 def load(bot):

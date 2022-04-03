@@ -30,8 +30,6 @@ async def on_message(event: hikari.MessageCreateEvent):
         event_plugin.bot.dispatch(event)
 
 
-
-
 def load(bot):
     bot.add_plugin(event_plugin)
 

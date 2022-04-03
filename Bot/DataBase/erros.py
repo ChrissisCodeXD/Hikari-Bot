@@ -16,11 +16,11 @@ class DBErros:
         mycursor.close()
         mydb.close()
 
-    def add(self,err_id,cmd,trc):
+    def add(self, err_id, cmd, trc):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"INSERT INTO errors (err_id, err_cmd,err_text)VALUES (%s, %s,%s)"
-        val = (err_id, str(cmd),str(trc))
+        val = (err_id, str(cmd), str(trc))
         mycursor.execute(query, val)
         mydb.commit()
         mycursor.close()

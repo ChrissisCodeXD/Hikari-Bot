@@ -16,14 +16,11 @@ async def on_guild_join(event: hikari.GuildJoinEvent):
     await Log.send_guild_join(event.guild)
 
 
-
-
 @guild_plugin.listener(hikari.RoleDeleteEvent)
 async def on_roles_delete(event: hikari.RoleDeleteEvent):
     mute_roles = DBMute(event.app.db).get_mute_roles()
     if str(event.role_id) in mute_roles:
         print("yes")
-
 
 
 def load(bot):

@@ -1,8 +1,4 @@
-
-
-
-
-async def purge(channel_id,limit,bot,user):
+async def purge(channel_id, limit, bot, user=None):
     """:cvar
     deletes a amount of given messages in a channel.
     Max amount of messages(limit) is 100 everything about 100 will be ignored.

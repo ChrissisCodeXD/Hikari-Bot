@@ -3,9 +3,9 @@ import typing as t
 from pathlib import Path
 from logger.main_loggers import Logger
 
-__guilds__ = (948904191559077888,952871675375022141)
+__guilds__ = (948904191559077888,764397934476263464)
 
-__testing__= True
+__testing__ = True
 __beta__ = True
 __prefix__ = "!"
 __productname__ = "1. Test Bot"

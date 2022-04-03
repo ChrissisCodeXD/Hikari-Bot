@@ -1,5 +1,5 @@
-
 import re
+
 time_regex = re.compile(r"(?:(\d{1,5})(d|w|y|m|h))+?")
 time_dict = {"d": 86400, "w": 604800, "y": 31556952, "m": 60, "h": 3600}
 

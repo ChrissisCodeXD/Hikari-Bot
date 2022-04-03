@@ -8,7 +8,6 @@ class DBCoc:
     def __init__(self, dbConnection):
         self.dbConnection = dbConnection
 
-
     def create(self):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
@@ -17,7 +16,7 @@ class DBCoc:
         mycursor.close()
         mydb.close()
 
-    def get(self,guild_id):
+    def get(self, guild_id):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"SELECT * FROM coc WHERE guild_id = %s;"
@@ -27,7 +26,7 @@ class DBCoc:
         mydb.close()
         return result
 
-    def add(self, guild_id, channel_id,mgs_id):
+    def add(self, guild_id, channel_id, mgs_id):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"INSERT INTO coc (guild_id, channel_id)VALUES (%s, %s)"

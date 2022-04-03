@@ -11,7 +11,7 @@ welcome_plugin.add_checks(
 )
 
 
-#async def _check(member: hikari.guilds.Member):
+# async def _check(member: hikari.guilds.Member):
 #    if not DBWelcome(welcome_plugin.app.db).indata(member.guild_id):
 #        # TODO
 #        pass
@@ -24,12 +24,12 @@ async def welcome(ctx: lightbulb.Context) -> None:
     pass
 
 
-
 utils.Color
-banner_options = ["anime","black","fortnite"]
-banner_colors = ["teal","dark_teal","green","dark_green","blue","dark_blue","purple","magenta","dark_magenta","gold","dark_gold","orange","dark_orange","red","dark_red","lighter_grey","dark_grey","light_grey"
-                 "darker_grey","blurple","greyple","dark_theme"]
-
+banner_options = ["anime", "black", "fortnite"]
+banner_colors = ["teal", "dark_teal", "green", "dark_green", "blue", "dark_blue", "purple", "magenta", "dark_magenta",
+                 "gold", "dark_gold", "orange", "dark_orange", "red", "dark_red", "lighter_grey", "dark_grey",
+                 "light_grey"
+                 "darker_grey", "blurple", "greyple", "dark_theme"]
 
 
 @welcome.child()
@@ -61,9 +61,9 @@ async def welcome_list(ctx: lightbulb.Context) -> None:
 @lightbulb.check_exempt(utils.mod_check)
 @lightbulb.option("channel", "The Channel to send Welcome Message", type=hikari.TextableGuildChannel, required=False)
 @lightbulb.option("message", "The Message to send", type=str, required=False)
-@lightbulb.option("banner","If you want to use a banner", type=bool, required=False)
-@lightbulb.option("banner_background","The banner background", type=str, required=False,choices=banner_options)
-@lightbulb.option("color","The color of the Embed", type=str, required=False,choices=banner_colors)
+@lightbulb.option("banner", "If you want to use a banner", type=bool, required=False)
+@lightbulb.option("banner_background", "The banner background", type=str, required=False, choices=banner_options)
+@lightbulb.option("color", "The color of the Embed", type=str, required=False, choices=banner_colors)
 @lightbulb.command("add", "add a welcome Channel")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
 async def welcome_add(ctx: lightbulb.Context) -> None:
@@ -130,9 +130,9 @@ async def welcome_add(ctx: lightbulb.Context) -> None:
 
     if len(message) == 0 or message.strip() == "":
         if ctx.interaction:
-            await ctx.respond("Please provide a message",flags=hikari.MessageFlag.EPHEMERAL)
+            await ctx.respond("Please provide a message", flags=hikari.MessageFlag.EPHEMERAL)
         else:
-            await ctx.respond("Please provide a message",delete_after=5)
+            await ctx.respond("Please provide a message", delete_after=5)
         return
 
     banner = 1 if ctx.options.banner else 0
@@ -144,9 +144,9 @@ async def welcome_add(ctx: lightbulb.Context) -> None:
                              description="Please provide a valid channel\n You can only use TextChannels for Welcome Channels",
                              color=utils.Color.red().__str__(), timestamp=utils.get_time())
         if ctx.interaction:
-            await ctx.respond(embed=embed,flags=hikari.MessageFlag.EPHEMERAL)
+            await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
         else:
-            await ctx.respond(embed=embed,delete_after=5)
+            await ctx.respond(embed=embed, delete_after=5)
         return
     channell = DBWelcomeChannel(welcome_plugin.app.db).is_channel_indb(ctx.get_guild().id, channel.id)
     if channell:
@@ -154,11 +154,12 @@ async def welcome_add(ctx: lightbulb.Context) -> None:
                              description="This channel is already a Welcome Channel",
                              color=utils.Color.red().__str__(), timestamp=utils.get_time())
         if ctx.interaction:
-            await ctx.respond(embed=embed,flags=hikari.MessageFlag.EPHEMERAL)
+            await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
         else:
-            await ctx.respond(embed=embed,delete_after=5)
+            await ctx.respond(embed=embed, delete_after=5)
         return
-    DBWelcomeChannel(welcome_plugin.app.db).add_channel(guild.id, channel.id, message,banner,banner_background,banner_color)
+    DBWelcomeChannel(welcome_plugin.app.db).add_channel(guild.id, channel.id, message, banner, banner_background,
+                                                        banner_color)
     embed = hikari.Embed(title="✅ Success",
                          description="Welcome Channel added",
                          color=utils.Color.green().__str__(), timestamp=utils.get_time())
@@ -169,11 +170,10 @@ async def welcome_add(ctx: lightbulb.Context) -> None:
     return
 
 
-
 @welcome.child()
 @lightbulb.check_exempt(utils.mod_check)
-@lightbulb.command("help","help for the welcome system")
-@lightbulb.implements(lightbulb.SlashSubCommand,lightbulb.PrefixSubCommand)
+@lightbulb.command("help", "help for the welcome system")
+@lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
 async def welcome_help(ctx):
     embed = hikari.Embed(title="Welcome System Help",
                          description="This is the help for the Welcome System",
@@ -188,12 +188,10 @@ async def welcome_help(ctx):
                           "`{member_id}` - The member id"
                     )
     if ctx.interaction:
-        await ctx.respond(embed=embed,flags=hikari.MessageFlag.EPHEMERAL)
+        await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
     else:
-        await ctx.respond(embed=embed,delete_after=5)
+        await ctx.respond(embed=embed, delete_after=5)
     return
-
-
 
 
 @welcome.child()
@@ -203,7 +201,7 @@ async def welcome_help(ctx):
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
 async def welcome_remove(ctx: lightbulb.Context) -> None:
     channel = ctx.options.channel
-    if not channel or not  channel.type == hikari.ChannelType.GUILD_TEXT:
+    if not channel or not channel.type == hikari.ChannelType.GUILD_TEXT:
         embed = hikari.Embed(title="❌ Error",
                              description="Please provide a valid channel\n You can only use TextChannels for Welcome Channels",
                              color=utils.Color.red().__str__(), timestamp=utils.get_time())
@@ -221,9 +219,9 @@ async def welcome_remove(ctx: lightbulb.Context) -> None:
                          description="Welcome Channel removed",
                          color=utils.Color.green().__str__(), timestamp=utils.get_time())
     if ctx.interaction:
-        await ctx.respond(embed=embed,flags=hikari.MessageFlag.EPHEMERAL)
+        await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
     else:
-        await ctx.respond(embed=embed,delete_after=5)
+        await ctx.respond(embed=embed, delete_after=5)
     return
 
 
@@ -247,25 +245,12 @@ async def on_member_join(event: hikari.MemberCreateEvent) -> None:
                     color=i[6]
                 )
                 if i[4] == 1:
-                    banner = await utils.get_banner(event.member,event.get_guild(),i[5])
+                    banner = await utils.get_banner(event.member, event.get_guild(), i[5])
                     embed.set_image(open(banner, "rb").read())
                     await channel.send(embed=embed)
     return
 
     return
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     """     
     if event.guild_id == 952871675375022141:

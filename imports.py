@@ -21,3 +21,4 @@ import re
 import asyncio
 import math
 import coc
+import hashlib

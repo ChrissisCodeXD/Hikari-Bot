@@ -6,9 +6,11 @@ from Bot.DataBase.warnsys import DBwarn
 from Bot.extensions.moderation.ban import ban_member
 from Bot.extensions.moderation.kick import kick_member
 from Bot.DataBase.settings import DBSettings
+
 warn_plugin = lightbulb.Plugin("moderation.warn")
 
-async def event_mod_check(guild_id,member):
+
+async def event_mod_check(guild_id, member):
     result = DBSettings(warn_plugin.app.db).get_settings(guild_id)
     if not result: DBSettings(warn_plugin.app.db).add(guild_id)
     if not result: return False
@@ -21,7 +23,7 @@ async def event_mod_check(guild_id,member):
 
 
 @warn_plugin.listener(hikari.InteractionCreateEvent)
-async def on_interaction(event:hikari.InteractionCreateEvent):
+async def on_interaction(event: hikari.InteractionCreateEvent):
     if not isinstance(event.interaction, hikari.ComponentInteraction): return
     i = event.interaction
     if not i.guild_id: return
@@ -34,13 +36,14 @@ async def on_interaction(event:hikari.InteractionCreateEvent):
     res = DBwarn(warn_plugin.bot.db).del_warn(cid)
     if res:
         embed = hikari.Embed(
-            title = f"✅ Deleted the Warn",
+            title=f"✅ Deleted the Warn",
             description=f"Deleted Warn with ID: {cid}",
             color=utils.Color.green().__str__(),
             timestamp=utils.get_time()
         )
 
-        await i.create_initial_response(hikari.ResponseType.MESSAGE_CREATE,embed=embed,flags=hikari.MessageFlag.EPHEMERAL)
+        await i.create_initial_response(hikari.ResponseType.MESSAGE_CREATE, embed=embed,
+                                        flags=hikari.MessageFlag.EPHEMERAL)
     else:
         embed = hikari.Embed(
             title=f"❌ ID Error!",
@@ -55,8 +58,8 @@ async def on_interaction(event:hikari.InteractionCreateEvent):
 
 @warn_plugin.command()
 @lightbulb.check_exempt(utils.mod_check)
-@lightbulb.command("warn","The Warnsystem")
-@lightbulb.implements(lightbulb.PrefixCommandGroup,lightbulb.SlashCommandGroup)
+@lightbulb.command("warn", "The Warnsystem")
+@lightbulb.implements(lightbulb.PrefixCommandGroup, lightbulb.SlashCommandGroup)
 async def mute_cmd(ctx):
     pass
 
@@ -66,15 +69,15 @@ async def mute_cmd(ctx):
 @lightbulb.option("member", "The User you want to have Info about", hikari.Member, required=True)
 @lightbulb.command("info", "Infos About the Warns from a given User")
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
-async def warn_info(ctx:lightbulb.Context):
+async def warn_info(ctx: lightbulb.Context):
     embed = utils.l_embed
     if ctx.interaction:
-        await ctx.respond(embed=embed,flags=hikari.MessageFlag.EPHEMERAL)
+        await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
     else:
         await ctx.respond(embed=embed, delete_after=10)
     member: hikari.Member = ctx.options.member
     if not ctx.interaction: await ctx.event.message.delete()
-    res = DBwarn(ctx.app.db).get_warns(member.id,ctx.guild_id)
+    res = DBwarn(ctx.app.db).get_warns(member.id, ctx.guild_id)
     embed = hikari.Embed(
         title=f'Member has no Warns' if not len(res) > 0 else f"Warns from {member.username}",
         color=utils.Color.red().__str__() if not len(res) > 0 else utils.Color.green().__str__(),
@@ -91,21 +94,18 @@ async def warn_info(ctx:lightbulb.Context):
         """)
     rows = []
     for e, i in enumerate(res):
-        index = math.floor(e/5)
+        index = math.floor(e / 5)
         if index == len(rows): rows.append(ctx.bot.rest.build_action_row())
         act = rows[index]
         act.add_button(
             hikari.messages.ButtonStyle.PRIMARY,
             f"warn_delete.{i[5]}"
-        ).set_label(f"{e+1}").set_emoji("💢").add_to_container()
-
+        ).set_label(f"{e + 1}").set_emoji("💢").add_to_container()
 
     if ctx.interaction:
-        await ctx.respond(embed=embed, components=rows,flags=hikari.MessageFlag.EPHEMERAL)
+        await ctx.respond(embed=embed, components=rows, flags=hikari.MessageFlag.EPHEMERAL)
     else:
         await ctx.respond(embed=embed, components=rows, delete_after=10)
-
-
 
 
 @mute_cmd.child()
@@ -113,7 +113,7 @@ async def warn_info(ctx:lightbulb.Context):
 @lightbulb.option("reason", "The Reason for warning the Member", str, required=True)
 @lightbulb.option("member", "Warns the given Member", hikari.Member, required=True)
 @lightbulb.command("add", "Warns the given Member")
-@lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand,lightbulb.MessageCommand)
+@lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand, lightbulb.MessageCommand)
 async def warn(ctx: lightbulb.Context) -> None:
     if not ctx.interaction: await ctx.event.message.delete()
     if type(ctx) == lightbulb.context.UserContext:
@@ -126,9 +126,9 @@ async def warn(ctx: lightbulb.Context) -> None:
         user = ctx.options.member
         reason = ctx.options.reason
 
-    uni_id = DBwarn(ctx.app.db).add(ctx.author.id,reason,user.id,ctx.guild_id)
+    uni_id = DBwarn(ctx.app.db).add(ctx.author.id, reason, user.id, ctx.guild_id)
 
-    warns = len(DBwarn(ctx.app.db).get_warns(user.id,ctx.guild_id))
+    warns = len(DBwarn(ctx.app.db).get_warns(user.id, ctx.guild_id))
 
     embed_sucessfull = hikari.Embed(
         title=f"Sucessfully warned the User `{user}` . He has now {warns} warns.",
@@ -144,7 +144,7 @@ async def warn(ctx: lightbulb.Context) -> None:
     )
 
     settings = DBwarn(ctx.app.db).get_settings(ctx.guild_id)
-    next_punishment = get_next_punishment(warns,settings[str(ctx.guild_id)])
+    next_punishment = get_next_punishment(warns, settings[str(ctx.guild_id)])
 
     if next_punishment:
         match next_punishment[1]:
@@ -152,25 +152,25 @@ async def warn(ctx: lightbulb.Context) -> None:
                 punish = "banned"
             case "kick":
                 punish = "kicked"
-        embed_info.add_field("Next Punishment",f"When you will get warned {next_punishment[0]} more times, you will get **{punish}**")
+        embed_info.add_field("Next Punishment",
+                             f"When you will get warned {next_punishment[0]} more times, you will get **{punish}**")
     embed_info.set_thumbnail(utils.guild_icon(ctx.get_guild()))
-    embed_info.add_field("Reason:",reason)
+    embed_info.add_field("Reason:", reason)
 
     if ctx.interaction:
-        await ctx.respond(embed=embed_sucessfull,flags=hikari.MessageFlag.EPHEMERAL)
+        await ctx.respond(embed=embed_sucessfull, flags=hikari.MessageFlag.EPHEMERAL)
     else:
         await ctx.respond(embed=embed_sucessfull, delete_after=3)
-
 
     await user.send(embed=embed_info)
 
     event = utils.WarnEvent(
-        app = ctx.app,
-        author = ctx.author,
-        user = user,
-        reason = reason,
-        guild_id = ctx.guild_id,
-        guild = ctx.get_guild()
+        app=ctx.app,
+        author=ctx.author,
+        user=user,
+        reason=reason,
+        guild_id=ctx.guild_id,
+        guild=ctx.get_guild()
     )
 
     await warn_plugin.bot.dispatch(event)
@@ -178,11 +178,11 @@ async def warn(ctx: lightbulb.Context) -> None:
 
 @mute_cmd.child()
 @lightbulb.check_exempt(utils.mod_check)
-@lightbulb.option("id","The Warn-ID from the Warn you want to delete!", required=False)
+@lightbulb.option("id", "The Warn-ID from the Warn you want to delete!", required=False)
 @lightbulb.option("member", "The Member you want to delete the Warns from", hikari.Member, required=False)
-@lightbulb.command("delete", "Deletes The Warns from a given Member or from Warn-ID",inherit_checks=True)
+@lightbulb.command("delete", "Deletes The Warns from a given Member or from Warn-ID", inherit_checks=True)
 @lightbulb.implements(lightbulb.SlashSubCommand, lightbulb.PrefixSubCommand)
-async def mute_delete(ctx:lightbulb.Context):
+async def mute_delete(ctx: lightbulb.Context):
     async with ctx.get_channel().trigger_typing():
         if not ctx.interaction: await ctx.event.message.delete()
         if 'delete' in ctx.raw_options: del ctx.raw_options['delete']
@@ -206,18 +206,18 @@ async def mute_delete(ctx:lightbulb.Context):
             )
             actionrow = ctx.bot.rest.build_action_row()
             actionrow.add_button(
-                    hikari.messages.ButtonStyle.PRIMARY,
-                    "ID-Button"
-                ).set_label(f"ID").set_emoji("#️⃣").add_to_container()
+                hikari.messages.ButtonStyle.PRIMARY,
+                "ID-Button"
+            ).set_label(f"ID").set_emoji("#️⃣").add_to_container()
             actionrow.add_button(
-                    hikari.messages.ButtonStyle.PRIMARY,
-                    "Member-Button"
-                ).set_label(f"Member").set_emoji("👤").add_to_container()
+                hikari.messages.ButtonStyle.PRIMARY,
+                "Member-Button"
+            ).set_label(f"Member").set_emoji("👤").add_to_container()
 
             if ctx.interaction:
-                await ctx.respond(embed=embed,component=actionrow, flags=hikari.MessageFlag.EPHEMERAL)
+                await ctx.respond(embed=embed, component=actionrow, flags=hikari.MessageFlag.EPHEMERAL)
             else:
-                await ctx.respond(embed=embed,component=actionrow,delete_after=60)
+                await ctx.respond(embed=embed, component=actionrow, delete_after=60)
             try:
                 event = await ctx.bot.wait_for(
                     hikari.InteractionCreateEvent,
@@ -232,11 +232,11 @@ async def mute_delete(ctx:lightbulb.Context):
                 )
             except asyncio.TimeoutError:
                 if ctx.interaction:
-                    await ctx.respond("The menu timed out :c",flags=hikari.MessageFlag.EPHEMERAL)
+                    await ctx.respond("The menu timed out :c", flags=hikari.MessageFlag.EPHEMERAL)
                 else:
                     await ctx.edit_last_response("The menu timed out :c", delete_after=5)
             else:
-                msg=None
+                msg = None
                 if event.interaction.custom_id == "Member-Button":
                     embed = hikari.Embed(
                         title=f"✅ Deleted all Warns from {ctx.options.member}",
@@ -245,7 +245,8 @@ async def mute_delete(ctx:lightbulb.Context):
                     )
                     DBwarn(warn_plugin.app.db).delete_all_mute_from(ctx.options.member.id, ctx.guild_id)
                     if ctx.interaction:
-                        await event.interaction.create_initial_response(hikari.ResponseType.MESSAGE_CREATE,embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
+                        await event.interaction.create_initial_response(hikari.ResponseType.MESSAGE_CREATE, embed=embed,
+                                                                        flags=hikari.MessageFlag.EPHEMERAL)
                     else:
                         msg = await ctx.edit_last_response(embed=embed, components=[])
 
@@ -293,7 +294,7 @@ async def mute_delete(ctx:lightbulb.Context):
             if ctx.interaction:
                 return await ctx.respond(embed=embed, components=[], flags=hikari.MessageFlag.EPHEMERAL)
             else:
-                return await ctx.respond(embed=embed, components=[],delete_after=5)
+                return await ctx.respond(embed=embed, components=[], delete_after=5)
         else:
             res = DBwarn(warn_plugin.bot.db).del_warn(ctx.options.id)
             if not res:
@@ -307,7 +308,7 @@ async def mute_delete(ctx:lightbulb.Context):
                 if ctx.interaction:
                     return await ctx.respond(embed=embed, components=[], flags=hikari.MessageFlag.EPHEMERAL)
                 else:
-                    return await ctx.respond(embed=embed, components=[],delete_after=5)
+                    return await ctx.respond(embed=embed, components=[], delete_after=5)
             else:
                 embed = hikari.Embed(
                     title=f"✅ Deleted Warns with ID: {ctx.options.id}",
@@ -318,34 +319,34 @@ async def mute_delete(ctx:lightbulb.Context):
                 if ctx.interaction:
                     return await ctx.respond(embed=embed, components=[], flags=hikari.MessageFlag.EPHEMERAL)
                 else:
-                    return await ctx.respond(embed=embed, components=[],delete_after=5)
+                    return await ctx.respond(embed=embed, components=[], delete_after=5)
 
-def get_next_punishment(num,punishments):
+
+def get_next_punishment(num, punishments):
     if len(punishments) == 0:
         return None
-    if num > punishments[len(punishments)-1][0]:
-        return [0,punishments[len(punishments)-1][1]]
+    if num > punishments[len(punishments) - 1][0]:
+        return [0, punishments[len(punishments) - 1][1]]
 
     before = None
-    for e,i in enumerate(punishments):
+    for e, i in enumerate(punishments):
         if not before:
             if num < i[0]:
-                return [i[0]-num,i[1]]
+                return [i[0] - num, i[1]]
         if num == i[0]:
-            return [0,i[1]]
+            return [0, i[1]]
         elif num < i[0]:
-            return [i[0]-num,i[1]]
+            return [i[0] - num, i[1]]
 
-    return [0,punishments[len(punishments)-1][1]]
+    return [0, punishments[len(punishments) - 1][1]]
 
 
-
-def get_punishment(num:int,punishments:list) -> None | str:
+def get_punishment(num: int, punishments: list) -> None | str:
     if num < punishments[0][0]:
         return None
 
-    if num > punishments[len(punishments)-1][0]:
-        return punishments[len(punishments)-1][1]
+    if num > punishments[len(punishments) - 1][0]:
+        return punishments[len(punishments) - 1][1]
     else:
         for i in punishments:
             if i[0] == num:
@@ -354,7 +355,7 @@ def get_punishment(num:int,punishments:list) -> None | str:
 
 @warn_plugin.listener(utils.WarnEvent)
 async def warn_event(event: utils.WarnEvent):
-    result = DBwarn(event.app.db).get_warns(event.user,event.guild_id)
+    result = DBwarn(event.app.db).get_warns(event.user, event.guild_id)
     settings = DBwarn(event.app.db).get_settings(event.guild_id)
     if len(settings) == 0:
         DBwarn(event.app.db).add_settings(event.guild_id)
@@ -363,7 +364,7 @@ async def warn_event(event: utils.WarnEvent):
     if len(settings[str(event.guild_id)]) == 0:
         return
 
-    punishment = get_punishment(len(result),settings[str(event.guild_id)])
+    punishment = get_punishment(len(result), settings[str(event.guild_id)])
 
     done = None
 
@@ -371,7 +372,7 @@ async def warn_event(event: utils.WarnEvent):
         match punishment:
             case "ban":
                 res = f"{event.user} got banned becouse he has now {len(result)} warns."
-                await ban_member(event.user,event.guild,res)
+                await ban_member(event.user, event.guild, res)
                 done = "banned"
             case "kick":
                 res = f"{event.user} got kicked becouse he has now {len(result)} warns."
@@ -386,6 +387,7 @@ async def warn_event(event: utils.WarnEvent):
         )
         embed.set_thumbnail(utils.guild_icon(event.guild))
         await event.user.send(embed=embed)
+
 
 def load(bot):
     bot.add_plugin(warn_plugin)

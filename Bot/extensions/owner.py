@@ -19,25 +19,27 @@ _extensions.extend([f"test.{p.stem}" for p in Path("./extensions/test/").glob("*
 _extensions.extend([f"fun.{p.stem}" for p in Path("./extensions/fun/").glob("*.py")])
 _extensions.extend([f"server_managment.{p.stem}" for p in Path("./extensions/server_managment/").glob("*.py")])
 
-
 extensions = []
 for i in _extensions:
     if not i.split(".")[0] in extensions:
         extensions.append(i.split(".")[0])
 
 
-
 @owner_plugin.command()
-@lightbulb.command("shutdown", "Shutds down the Bot.",guilds=[948904191559077888])
+@lightbulb.command("shutdown", "Shutds down the Bot.", guilds=[948904191559077888])
 @lightbulb.implements(lightbulb.SlashCommand)
 async def mute(ctx: lightbulb.Context) -> None:
     log.info("Shutdown signal received")
-    await ctx.respond("Now shutting down.",flags=hikari.MessageFlag.EPHEMERAL)
+    await ctx.respond("Now shutting down.", flags=hikari.MessageFlag.EPHEMERAL)
     await ctx.bot.close()
 
 
-
-
+@owner_plugin.command()
+@lightbulb.add_checks(lightbulb.checks.owner_only)
+@lightbulb.command("error", "Reload the Bot")
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
+async def error(ctx: lightbulb.Context):
+    raise RuntimeError("This is a test error")
 
 
 @owner_plugin.command()
@@ -45,7 +47,7 @@ async def mute(ctx: lightbulb.Context) -> None:
                   default=False)
 @lightbulb.option("guild", "The ID of the target guild", str, required=True)
 @lightbulb.command("clearcmd", "purge all slash commands from specified guild")
-@lightbulb.implements(lightbulb.PrefixCommand,lightbulb.SlashCommand)
+@lightbulb.implements(lightbulb.PrefixCommand, lightbulb.SlashCommand)
 async def purge_cmd(ctx: lightbulb.Context):
     guild = ctx.options.guild
     globals = ctx.options.globals
@@ -56,7 +58,7 @@ async def purge_cmd(ctx: lightbulb.Context):
 @owner_plugin.command()
 @lightbulb.add_checks(lightbulb.checks.owner_only)
 @lightbulb.command("extension", "manage an extension")
-@lightbulb.implements(lightbulb.PrefixCommandGroup,lightbulb.SlashCommandGroup)
+@lightbulb.implements(lightbulb.PrefixCommandGroup, lightbulb.SlashCommandGroup)
 async def extension_manager(ctx: lightbulb.Context):
     pass
 
@@ -67,7 +69,7 @@ async def extension_manager(ctx: lightbulb.Context):
 @lightbulb.option("category", "the category of the extension", str, required=False,
                   choices=extensions)
 @lightbulb.command("reload", "Reload an extension", inherit_checks=True)
-@lightbulb.implements(lightbulb.PrefixSubCommand,lightbulb.SlashSubCommand)
+@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def extension_reload(ctx: lightbulb.Context):
     name = ctx.options.name
     category = ctx.options.category
@@ -87,7 +89,7 @@ async def extension_reload(ctx: lightbulb.Context):
 @lightbulb.option("category", "the category of the extension", str, required=False,
                   choices=extensions)
 @lightbulb.command("unload", "Unload an extension", inherit_checks=True)
-@lightbulb.implements(lightbulb.PrefixSubCommand,lightbulb.SlashSubCommand)
+@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def extension_unload(ctx: lightbulb.Context):
     name = ctx.options.name
     category = ctx.options.category
@@ -107,7 +109,7 @@ async def extension_unload(ctx: lightbulb.Context):
 @lightbulb.option("category", "the category of the extension", str, required=False,
                   choices=extensions)
 @lightbulb.command("load", "Load an extension", inherit_checks=True)
-@lightbulb.implements(lightbulb.PrefixSubCommand,lightbulb.SlashSubCommand)
+@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def extension_load(ctx: lightbulb.Context):
     name = ctx.options.name
     category = ctx.options.category
@@ -120,8 +122,6 @@ async def extension_load(ctx: lightbulb.Context):
         await ctx.respond(f"Successfully loaded `{name}`!", flags=hikari.MessageFlag.EPHEMERAL)
     else:
         await ctx.respond(f"Successfully loaded `{name}`!", delete_after=20)
-
-
 
 
 def load(bot):

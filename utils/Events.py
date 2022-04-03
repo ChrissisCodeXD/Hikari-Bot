@@ -15,14 +15,11 @@ class OnLinkProtectMessageCreate(Event):
     """
     app: RESTAware = attr.field()
 
-    message:hikari.Message = attr.field()
+    message: hikari.Message = attr.field()
 
-    original_event:hikari.events.GuildMessageCreateEvent = attr.field()
+    original_event: hikari.events.GuildMessageCreateEvent = attr.field()
 
     settings: dict = attr.field()
-
-
-
 
 
 @attr.define()
@@ -84,5 +81,3 @@ class WarnEvent(Event):
     guild_id: int = attr.field()
 
     guild: Guild = attr.field()
-
-

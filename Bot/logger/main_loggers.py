@@ -14,7 +14,7 @@ class Logger():
         self.time = datetime.datetime.now(tz=self.pytz)
 
     @class_time_wrapper
-    async def send_error_log(self, err, cmd,id):
+    async def send_error_log(self, err, cmd, id):
         embed = discord.Embed(
             title=f"Ein Fehler ist aufgetreten! {type(err)}",
             description=err,
@@ -24,7 +24,7 @@ class Logger():
         embed.add_field(name="Command:", value=f"{cmd}")
         embed.add_field(name=f"Error:", value=f"{err}")
         if id:
-            embed.add_field(name=f"ID:",value=str(id))
+            embed.add_field(name=f"ID:", value=str(id))
         trc_list = [i for i in traceback.TracebackException.from_exception(err).format()]
         filename = f'./extensions/err_logs/errorlog_{cmd}_{int(time.time())}.txt'
         with open(filename, 'w') as file:
@@ -76,7 +76,7 @@ class Logger():
         )
         embed.add_field(name="Members:", value=f"{len(bot.cache.get_members_view())}")
         embed.add_field(name=f"Guilds:", value=f"{len(bot.cache.get_available_guilds_view())}")
-        embed.add_field(name=f"Ping:", value=f"{bot.heartbeat_latency}")
+        embed.add_field(name=f"Ping:", value=f"{bot.heartbeat_latency*1000:.0f}ms")
         if bot.application.make_icon_url():
             embed.set_thumbnail(url=bot.application.make_icon_url())
 
@@ -89,4 +89,3 @@ class Logger():
                 avatar_url="https://cdn-icons.flaticon.com/png/512/2163/premium/2163271.png?token=exp=1646317406~hmac=435f9ab9a4b08285d23c342b6fbcbf30",
                 embed=embed,
             )
-

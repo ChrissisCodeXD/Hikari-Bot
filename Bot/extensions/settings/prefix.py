@@ -19,7 +19,7 @@ async def _prefix_cmd(ctx: lightbulb.Context) -> None:
     embed = hikari.Embed(title=f"Changed the Prefix to ` {prefix} `",
                          description=f"Now you can use every normal Command with `{prefix}command_name`",
                          color=utils.Color.green().__str__(),
-                         timestamp = utils.get_time())
+                         timestamp=utils.get_time())
     if ctx.interaction:
         await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
     else:
@@ -33,7 +33,7 @@ async def _prefix_cmd(ctx: lightbulb.Context) -> None:
     embed = hikari.Embed(
         title=f"Your Current Prefix ist ` {prefix_plugin.app._prefix__get_class.get_prefix(ctx.guild_id)} `",
         color=utils.Color.green().__str__(),
-        timestamp = utils.get_time())
+        timestamp=utils.get_time())
     if ctx.interaction:
         await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
     else:

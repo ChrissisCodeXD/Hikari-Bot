@@ -2,6 +2,7 @@ import discord
 from imports import *
 from Bot import __prefix__, Logger, __testing__
 from Bot.DataBase.erros import DBErros
+
 err_plugin = lightbulb.Plugin("error_plugin")
 
 Log = Logger()
@@ -9,8 +10,6 @@ Log = Logger()
 
 @err_plugin.listener(lightbulb.CommandErrorEvent)
 async def on_error(event):
-
-
     exception = event.exception
 
     if isinstance(event.exception, lightbulb.errors.NotEnoughArguments):
@@ -72,16 +71,16 @@ async def on_error(event):
     )
     if event.context.interaction:
         pass
-        #await event.context.respond(
-        #    embed=embed,
-        #    flags=hikari.MessageFlag.EPHEMERAL
-        #)
+        await event.context.respond(
+            embed=embed,
+            flags=hikari.MessageFlag.EPHEMERAL
+        )
     else:
         await event.context.respond(
             embed=embed,
             delete_after=15
         )
-    #await Log.send_error_log(event.exception, event.context.invoked_with,err_id)
+    # await Log.send_error_log(event.exception, event.context.invoked_with,err_id)
     if __testing__:
         raise (event.exception)
 

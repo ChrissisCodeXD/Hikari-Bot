@@ -20,12 +20,12 @@ clear_plugin.add_checks(
 async def clear(ctx: lightbulb.Context) -> None:
     user = ctx.options.user if ctx.options.user else None
     channel: hikari.GuildTextChannel = ctx.get_channel()
-    deleted = await utils.purge(channel.id, ctx.options.messages, clear_plugin.bot,user)
+    deleted = await utils.purge(channel.id, ctx.options.messages, clear_plugin.bot, user)
     if ctx.interaction:
         await ctx.respond(f"Deleted {deleted if deleted <= 100 else 100} Messages!",
-                      flags=hikari.MessageFlag.EPHEMERAL)
+                          flags=hikari.MessageFlag.EPHEMERAL)
     else:
-        await ctx.respond(f"Deleted {deleted if deleted <= 100 else 100} Messages!",delete_after=5)
+        await ctx.respond(f"Deleted {deleted if deleted <= 100 else 100} Messages!", delete_after=5)
 
 
 def load(bot):
