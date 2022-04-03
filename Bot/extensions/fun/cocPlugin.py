@@ -14,7 +14,7 @@ GUILD_ID = 952871675375022141
 WAR_CHANNEL_ID = 952871676079644775
 coc_plugin = lightbulb.Plugin("fun.coc_plugin")
 
-coc_client = coc.login("schwarzlichtampel@gmail.com", "Disco2007!",
+coc_client = coc.login(,
                        key_names="coc.py tests",
                        client=coc.EventsClient,
                        )
