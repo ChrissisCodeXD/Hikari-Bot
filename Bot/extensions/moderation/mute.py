@@ -1,3 +1,4 @@
+import hikari
 import lightbulb
 
 import utils
@@ -10,6 +11,23 @@ mute_plugin.add_checks(
     lightbulb.checks.guild_only,
     lightbulb.checks.has_guild_permissions(hikari.Permissions.ADMINISTRATOR)
 )
+
+
+async def on_mute_remove(ctx: lightbulb.Context,user: hikari.Member=None,cid = None):
+    if not user and not cid: return
+    if not user:
+        res = DBMute(ctx.app.db).get_mute(cid)
+        user = ctx.get_guild().get_member(res[0][3])
+        if not user: return
+    settings = DBMute(ctx.app.db).get_settings(ctx.guild_id)
+    mutes = DBMute(ctx.app.db).get_all_for_user(user.id, ctx.guild_id)
+    if not mutes:
+        guild = ctx.get_guild()
+        role = guild.get_role(settings[str(ctx.guild_id)])
+        if role.id in user.role_ids:
+            await user.remove_role(role, reason=f"Unmuting")
+
+
 
 
 async def _check(ctx: lightbulb.Context):
@@ -157,8 +175,9 @@ async def mute_delete(ctx: lightbulb.Context):
                         color=utils.Color.green().__str__(),
                         timestamp=utils.get_time()
                     )
-                    DBMute(mute_plugin.app.db).delete_all_mute_from(ctx.options.member.id, ctx.guild_id)
 
+                    DBMute(mute_plugin.app.db).delete_all_mute_from(ctx.options.member.id, ctx.guild_id)
+                    await on_mute_remove(ctx, ctx.options.member)
                     msg = await ctx.edit_last_response(embed=embed, components=[])
 
                 else:
@@ -173,6 +192,7 @@ async def mute_delete(ctx: lightbulb.Context):
 
                         msg = await ctx.edit_last_response(embed=embed, components=[])
                     else:
+                        await on_mute_remove(ctx, user=ctx.get_guild().get_member(res[0][3]))
                         embed = hikari.Embed(
                             title=f"✅ Deleted Mutes with ID: {ctx.options.id}",
                             color=utils.Color.green().__str__(),
@@ -189,8 +209,9 @@ async def mute_delete(ctx: lightbulb.Context):
                 color=utils.Color.green().__str__(),
                 timestamp=utils.get_time()
             )
-            DBMute(mute_plugin.app.db).delete_all_mute_from(ctx.options.member.id, ctx.guild_id)
 
+            DBMute(mute_plugin.app.db).delete_all_mute_from(ctx.options.member.id, ctx.guild_id)
+            await on_mute_remove(ctx, ctx.options.member)
             if ctx.interaction:
                 return await ctx.respond(embed=embed, components=[], flags=hikari.MessageFlag.EPHEMERAL)
             else:
@@ -210,6 +231,7 @@ async def mute_delete(ctx: lightbulb.Context):
                 else:
                     return await ctx.respond(embed=embed, components=[], delete_after=5)
             else:
+                await on_mute_remove(ctx, user=ctx.get_guild().get_member(res[0][3]))
                 embed = hikari.Embed(
                     title=f"✅ Deleted Mutes with ID: {ctx.options.id}",
                     color=utils.Color.green().__str__(),
