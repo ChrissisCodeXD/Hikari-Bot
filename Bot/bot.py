@@ -14,6 +14,8 @@ from Bot.DataBase.settings import DBSettings
 from Bot.DataBase.erros import DBErros
 from Bot.DataBase.welcome import *
 from Bot.DataBase.cocsys import DBCoc
+from Bot.DataBase.LinkSystem import DBLink
+from Bot.DataBase.levelsys import DBLevel
 from Bot import __version__, __prefix__, __beta__, __guilds__
 from utils import HelpCommand
 
@@ -60,6 +62,8 @@ class FirstBot(lightbulb.BotApp):
         self._extensions.extend([f"events.{p.stem}" for p in Path("./extensions/events/").glob("*.py")])
         self._extensions.extend([f"settings.{p.stem}" for p in Path("./extensions/settings/").glob("*.py")])
         self._extensions.extend([f"test.{p.stem}" for p in Path("./extensions/test/").glob("*.py")])
+        self._extensions.extend([f"security.{p.stem}" for p in Path("./extensions/security/").glob("*.py")])
+        self._extensions.extend([f"fun.{p.stem}" for p in Path("./extensions/fun/").glob("*.py")])
         self._extensions.extend([f"fun.{p.stem}" for p in Path("./extensions/fun/").glob("*.py")])
         self._extensions.extend([f"server_managment.{p.stem}" for p in Path("./extensions/server_managment/").glob("*.py")])
         self.env = utils.env()
@@ -129,6 +133,9 @@ class FirstBot(lightbulb.BotApp):
         DBErros(self.db).create()
         DBWelcomeChannel(self.db).create()
         DBCoc(self.db).create()
+        DBLink(self.db).create()
+        DBLevel(self.db).create()
+
 
         # cache = sake.redis.RedisCache(self, self, address="redis://127.0.0.1")
         # await cache.open()

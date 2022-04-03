@@ -7,13 +7,15 @@ import logging
 import utils
 import time
 import pytz
+import json
 import datetime
 import calendar
 from discord import Webhook, AsyncWebhookAdapter
 import aiohttp
 import discord
 import traceback
-import json
+import json, re, random
+import miru
 import mysql.connector
 import re
 import asyncio

@@ -15,6 +15,18 @@ async def mod_check(ctx: lightbulb.Context):
     return False
 
 
+async def mod_check_without_ctx(bot, guild_id, member):
+    result = DBSettings(bot.db).get_settings(guild_id)
+    if not result: DBSettings(bot.db).add(guild_id)
+    if not result: return False
+    if not member: return False
+    mod_roles = result[str(guild_id)][0]
+    for i in member.role_ids:
+        if int(i) in mod_roles:
+            return True
+    return False
+
+
 
 
 
