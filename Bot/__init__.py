@@ -3,7 +3,7 @@ import typing as t
 from pathlib import Path
 from logger.main_loggers import Logger
 
-__guilds__ = (948904191559077888,764397934476263464)
+__guilds__ = (948904191559077888)
 
 __testing__ = True
 __beta__ = True

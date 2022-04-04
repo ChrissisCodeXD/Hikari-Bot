@@ -76,7 +76,7 @@ class Logger():
         )
         embed.add_field(name="Members:", value=f"{len(bot.cache.get_members_view())}")
         embed.add_field(name=f"Guilds:", value=f"{len(bot.cache.get_available_guilds_view())}")
-        embed.add_field(name=f"Ping:", value=f"{bot.heartbeat_latency*1000:.0f}ms")
+        embed.add_field(name=f"Ping:", value=f"{bot.heartbeat_latency * 1000:.0f}ms")
         if bot.application.make_icon_url():
             embed.set_thumbnail(url=bot.application.make_icon_url())
 

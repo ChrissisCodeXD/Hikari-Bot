@@ -2,13 +2,7 @@ import hikari
 
 from imports import *
 
-
 wahlen_plugin = lightbulb.Plugin(name="server_managment.wahlen", description="Wahlen Plugin")
-
-
-
-
-
 
 
 def savenewadmin(userid, aaa: dict) -> bool:
@@ -29,14 +23,12 @@ def savenewadmin(userid, aaa: dict) -> bool:
     return False
 
 
-
-
 @wahlen_plugin.command()
-@lightbulb.option("admin1", "the first admin you want to add", type=hikari.Member,required=True)
-@lightbulb.option("admin2", "the second admin you want to add", type=hikari.Member,required=False)
+@lightbulb.option("admin1", "the first admin you want to add", type=hikari.Member, required=True)
+@lightbulb.option("admin2", "the second admin you want to add", type=hikari.Member, required=False)
 @lightbulb.command("addadmin", description="adds an admin to the list of admins")
 @lightbulb.implements(lightbulb.SlashCommand)
-async def einreiche_command( ctx):
+async def einreiche_command(ctx):
     """
     damit stellt man 2 admins auf.
     :param ctx:
@@ -74,7 +66,7 @@ async def einreiche_command( ctx):
             await ctx.respond(f"you can only add {left} more admins", flags=hikari.MessageFlag.EPHEMERAL)
     else:
         if admin1.id == ctx.author.id: return await ctx.respond("Du kannst dich nicht selber auftstellen!",
-                                                             flags=hikari.MessageFlag.EPHEMERAL)
+                                                                flags=hikari.MessageFlag.EPHEMERAL)
         if left > 0:
             got_added = savenewadmin(admin1.id, aaa)
             if not got_added:
@@ -89,17 +81,19 @@ async def einreiche_command( ctx):
     with open("./admins.json", "w") as e:
         json.dump(aaa, e, indent=4)
 
+
 @wahlen_plugin.command()
 @lightbulb.command("clearvotes", description="clears all votes")
 @lightbulb.implements(lightbulb.SlashCommand)
-async def clearvots_command( ctx):
+async def clearvots_command(ctx):
     deleteallchooses(ctx.author.id)
     await ctx.respond(f"Every Vote from u is now deleted!", flags=hikari.MessageFlag.EPHEMERAL)
+
 
 @wahlen_plugin.command()
 @lightbulb.command("seevotes", description="shows all votes")
 @lightbulb.implements(lightbulb.SlashCommand)
-async def seevotes_command( ctx):
+async def seevotes_command(ctx):
     tosend = {}
     print("a")
     if not ctx.author.id == 636998030666629120 and not ctx.author.id == 589898942527963157: return
@@ -118,7 +112,7 @@ async def seevotes_command( ctx):
     await ctx.author.send(message)
 
 
-async def gen_rows(bot,aaa,guild):
+async def gen_rows(bot, aaa, guild):
     rows: t.list[lightbulb.ActionRow] = []
     row = bot.rest.build_action_row()
     select = row.add_select_menu("wahlen")
@@ -127,13 +121,12 @@ async def gen_rows(bot,aaa,guild):
 
         label = str(guild.get_member(i))
         if label:
-            select.add_option(label,str(i)).add_to_menu()
+            select.add_option(label, str(i)).add_to_menu()
 
     select.add_to_container()
     rows.append(row)
 
     return rows
-
 
 
 @wahlen_plugin.command()
@@ -157,19 +150,20 @@ async def sendwahll_command(ctx):
         admins += f'`{k + 1}.` {user.mention}\n'
         aaa["abstimmung"][str(i)] = []
 
-    rows = await gen_rows(ctx.bot,aaa,guild)
+    rows = await gen_rows(ctx.bot, aaa, guild)
 
     with open("./admins.json", "w") as e:
         json.dump(aaa, e, indent=4)
 
     embed = hikari.Embed(title=f"Adminwahl",
-                          description=f'Es stehen nun wieder neue adminwahlen an. Die folgenden Personen wurden aufgestellt: \n{admins}')
+                         description=f'Es stehen nun wieder neue adminwahlen an. Die folgenden Personen wurden aufgestellt: \n{admins}')
     msg = await ctx.respond(embed=embed, components=rows)
     msg = await msg.message()
     aaa["channel"] = msg.channel_id
     aaa["message"] = msg.id
     with open("./admins.json", "w") as e:
         json.dump(aaa, e, indent=4)
+
 
 def hasselected(user: int):
     """
@@ -186,7 +180,8 @@ def hasselected(user: int):
 
     return toreturn
 
-async def updatemessage(bot,guild):
+
+async def updatemessage(bot, guild):
     """
     updated die nachricht zum waehlen damit man immer sieht wieviele stimmen es gerade sind
     :param ctx:
@@ -206,17 +201,17 @@ async def updatemessage(bot,guild):
     with open("./admins.json", "w") as e:
         json.dump(aaa, e, indent=4)
     embed = hikari.Embed(title=f"Adminwahl",
-                          description=f'Es stehen nun wieder neue adminwahlen an. Die folgenden Personen wurden aufgestellt: \n{admins}')
+                         description=f'Es stehen nun wieder neue adminwahlen an. Die folgenden Personen wurden aufgestellt: \n{admins}')
 
-
-    await utils.purge(aaa["channel"],20,bot)
+    await utils.purge(aaa["channel"], 20, bot)
     channel = guild.get_channel(aaa["channel"])
     msg = await channel.send(embed=embed, components=rows)
     aaa["message"] = msg.id
     with open("./admins.json", "w") as e:
         json.dump(aaa, e, indent=4)
 
-def deleteallchooses( user: int):
+
+def deleteallchooses(user: int):
     user = str(user)
     aaa = json.load(open("./admins.json", "r"))
     for i in aaa["abstimmung"]:
@@ -227,7 +222,6 @@ def deleteallchooses( user: int):
 
     with open("./admins.json", "w") as e:
         json.dump(aaa, e, indent=4)
-
 
 
 @wahlen_plugin.listener(hikari.InteractionCreateEvent)
@@ -243,12 +237,12 @@ async def wahlen(event: hikari.InteractionCreateEvent):
     i: hikari.ComponentInteraction = e.interaction
     guild = i.get_guild()
     if not i.guild_id: return
-    if not i.custom_id =="wahlen": return
+    if not i.custom_id == "wahlen": return
 
     hashchoosen = False
     await i.create_initial_response(hikari.ResponseType.MESSAGE_CREATE,
-        "Wahl wird verarbeitet... Bitte warte ein bisschen (Das ganze dauert ein bisschen laenger aufgrund der Datensicherheit des Codes)",
-        flags=hikari.MessageFlag.EPHEMERAL)
+                                    "Wahl wird verarbeitet... Bitte warte ein bisschen (Das ganze dauert ein bisschen laenger aufgrund der Datensicherheit des Codes)",
+                                    flags=hikari.MessageFlag.EPHEMERAL)
     aaa = json.load(open("./admins.json", "r"))
     selected = hasselected(user=i.member.id)
     # await ctx.defer(ignore=True)
@@ -268,14 +262,15 @@ async def wahlen(event: hikari.InteractionCreateEvent):
     if hashchoosen == True:
         await i.edit_initial_response("Wahl verarbeitet!")
 
-    await updatemessage(e.interaction.app,guild)
+    await updatemessage(e.interaction.app, guild)
 
     with open("./admins.json", "w") as ee:
-        json.dump(aaa, ee,indent=4)
+        json.dump(aaa, ee, indent=4)
 
 
 def load(bot):
     bot.add_plugin(wahlen_plugin)
+
 
 def unload(bot):
     bot.remove_plugin(wahlen_plugin)

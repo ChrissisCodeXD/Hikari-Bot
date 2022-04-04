@@ -13,7 +13,7 @@ mute_plugin.add_checks(
 )
 
 
-async def on_mute_remove(ctx: lightbulb.Context,user: hikari.Member=None,cid = None):
+async def on_mute_remove(ctx: lightbulb.Context, user: hikari.Member = None, cid=None):
     if not user and not cid: return
     if not user:
         res = DBMute(ctx.app.db).get_mute(cid)
@@ -26,8 +26,6 @@ async def on_mute_remove(ctx: lightbulb.Context,user: hikari.Member=None,cid = N
         role = guild.get_role(settings[str(ctx.guild_id)])
         if role.id in user.role_ids:
             await user.remove_role(role, reason=f"Unmuting")
-
-
 
 
 async def _check(ctx: lightbulb.Context):

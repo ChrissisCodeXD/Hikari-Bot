@@ -15,8 +15,6 @@ buttons = {
 }
 
 
-
-
 async def create_actionrows(bot: lightbulb.BotApp, guild_id) -> t.Iterable[ActionRowBuilder]:
     settings = DBLink(bot.db).get_settings(guild_id)
     if not settings:
@@ -55,6 +53,7 @@ link_plugin.add_checks(
     lightbulb.checks.guild_only,
 
 )
+
 
 @link_plugin.command()
 @lightbulb.check_exempt(utils.mod_check)

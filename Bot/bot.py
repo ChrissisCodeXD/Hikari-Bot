@@ -17,6 +17,7 @@ from Bot.DataBase.cocsys import DBCoc
 from Bot.DataBase.LinkSystem import DBLink
 from Bot.DataBase.levelsys import DBLevel
 from Bot.DataBase.auto_role import DBRole
+from Bot.DataBase.badword import DBBadWord
 from Bot import __version__, __prefix__, __beta__, __guilds__
 from utils import HelpCommand
 
@@ -65,7 +66,8 @@ class FirstBot(lightbulb.BotApp):
         self._extensions.extend([f"test.{p.stem}" for p in Path("./extensions/test/").glob("*.py")])
         self._extensions.extend([f"security.{p.stem}" for p in Path("./extensions/security/").glob("*.py")])
         self._extensions.extend([f"fun.{p.stem}" for p in Path("./extensions/fun/").glob("*.py")])
-        self._extensions.extend([f"server_managment.{p.stem}" for p in Path("./extensions/server_managment/").glob("*.py")])
+        self._extensions.extend(
+            [f"server_managment.{p.stem}" for p in Path("./extensions/server_managment/").glob("*.py")])
         self.env = utils.env()
         self.token = token = self.env.get('TOKEN1')
         if __beta__ == True:
@@ -136,6 +138,7 @@ class FirstBot(lightbulb.BotApp):
         DBLink(self.db).create()
         DBLevel(self.db).create()
         DBRole(self.db).create()
+        DBBadWord(self.db).create()
 
         # cache = sake.redis.RedisCache(self, self, address="redis://127.0.0.1")
         # await cache.open()

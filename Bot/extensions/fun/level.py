@@ -18,10 +18,9 @@ async def build_setting_rows(bot, settings):
     i = 0
     for button in settings:
 
-
         label = buttons.get(button)
         if label:
-            i+=1
+            i += 1
             if i % 5 == 0 and i != 0:
                 rows.append(row)
                 row = bot.rest.build_action_row()
@@ -116,15 +115,14 @@ async def on_message(event: hikari.GuildMessageCreateEvent):
             await channel.send(
                 settings["lvlmsg"].format(
                     user=event.member.username,
-                    usermention= event.member.mention,
+                    usermention=event.member.mention,
                     level=newlvl,
-                    xp = data[2],
-                    oldlevel = newlvl - 1,
-                    nextlevelxp = getmaxexp(newlvl),
-                    )
-
+                    xp=data[2],
+                    oldlevel=newlvl - 1,
+                    nextlevelxp=getmaxexp(newlvl),
                 )
 
+            )
 
 
 @level_plugin.command()
