@@ -246,6 +246,26 @@ async def settings(ctx):
 
 
 @level.child()
+@lightbulb.command("leaderboard", "leaderboard for levelsystem")
+@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
+async def leaderboard(ctx):
+    res = DBLevel(ctx.app.db).gettop10(ctx.guild_id)
+    users = ""
+    for i, usr in enumerate(res):
+        if not i > 9: break
+        member = ctx.get_guild().get_member(usr[1])
+        if not member:
+            member = await ctx.app.rest.fetch_user(usr[1])
+        users += f"`{i + 1}.` {member.username} - Lvl: {usr[5]} - Exp: {usr[2]}\n"
+
+    users += 'You can see the full leaderboard [here](http://45.129.183.230:13488/)'
+    embed = hikari.Embed(title="Level Leaderboard",
+                         description=users,
+                         color=utils.Color.green().__str__(), timestamp=utils.get_time())
+    await ctx.respond(embed=embed)
+
+
+@level.child()
 @lightbulb.command("help", "help for levelsystem")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def help(ctx):

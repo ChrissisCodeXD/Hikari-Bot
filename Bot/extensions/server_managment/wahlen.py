@@ -3,7 +3,7 @@ import hikari
 from imports import *
 
 
-wahlen_plugin = lightbulb.Plugin(name="server-managment.wahlen", description="Wahlen Plugin")
+wahlen_plugin = lightbulb.Plugin(name="server_managment.wahlen", description="Wahlen Plugin")
 
 
 
