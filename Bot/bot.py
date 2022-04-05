@@ -16,6 +16,8 @@ from Bot.DataBase.welcome import *
 from Bot.DataBase.cocsys import DBCoc
 from Bot.DataBase.LinkSystem import DBLink
 from Bot.DataBase.levelsys import DBLevel
+from Bot.DataBase.auto_role import DBRole
+from Bot.DataBase.badword import DBBadWord
 from Bot import __version__, __prefix__, __beta__, __guilds__
 from utils import HelpCommand
 
@@ -122,6 +124,7 @@ class FirstBot(lightbulb.BotApp):
         )
 
     async def on_starting(self: _BotT, event: hikari.StartingEvent) -> None:
+
         for ext in self._extensions:
             self.load_extensions(f"Bot.extensions.{ext}")
             log.info(f"'{ext}' extension loaded")
@@ -134,6 +137,8 @@ class FirstBot(lightbulb.BotApp):
         DBCoc(self.db).create()
         DBLink(self.db).create()
         DBLevel(self.db).create()
+        DBRole(self.db).create()
+        DBBadWord(self.db).create()
 
         # cache = sake.redis.RedisCache(self, self, address="redis://127.0.0.1")
         # await cache.open()

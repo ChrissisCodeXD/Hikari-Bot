@@ -3,7 +3,7 @@ import lightbulb
 from imports import *
 from Bot.DataBase.welcome import *
 
-welcome_plugin = lightbulb.Plugin("server-managment.welcome")
+welcome_plugin = lightbulb.Plugin("server_managment.welcome")
 
 welcome_plugin.add_checks(
     lightbulb.checks.guild_only,
