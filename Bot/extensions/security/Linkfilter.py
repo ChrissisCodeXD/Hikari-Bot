@@ -4,6 +4,7 @@ import lightbulb
 from imports import *
 from Bot.DataBase.LinkSystem import DBLink
 from hikari.api import ActionRowBuilder
+from Bot.extensions.server_managment.log_backend import message_delete
 
 buttons = {
     "social_media": "social_button",
@@ -275,7 +276,8 @@ async def on_link_message(event: utils.OnLinkProtectMessageCreate):
     if not active_filters: return
 
     link_filter = utils.LinkFilter(app=e.app,
-                                   msg=msg)
+                                   msg=msg,
+                                   event=event)
 
     if "social_media" in active_filters:
         await link_filter.is_social_media()

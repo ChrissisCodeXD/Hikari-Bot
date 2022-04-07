@@ -3,6 +3,7 @@ import hikari
 import utils
 from imports import *
 from Bot.DataBase.badword import DBBadWord
+from Bot.extensions.server_managment.log_backend import message_delete
 
 bad_word_plugin = lightbulb.Plugin("server_managment.bad_word")
 
@@ -185,6 +186,7 @@ async def on_message(event: hikari.events.GuildMessageCreateEvent):
         if type(i) is str:
             if i.lower() in event.message.content.lower():
                 await event.message.delete()
+                await message_delete(event.get_guild(), event.message, reason=f"Badword found!: `{i}`")
                 return
         else:
             x=0
@@ -192,6 +194,7 @@ async def on_message(event: hikari.events.GuildMessageCreateEvent):
                 if word.lower() in event.message.content.lower(): x+=1
                 if x == len(i):
                     await event.message.delete()
+                    await message_delete(event.get_guild(),event.message,reason=f"Badword Group found!: `{', '.join(i)}`")
                     return
 
 @bad_word.child()
