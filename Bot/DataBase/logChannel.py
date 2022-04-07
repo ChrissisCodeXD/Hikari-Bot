@@ -5,7 +5,7 @@ from Bot.DataBase.Connection import DBConnection
 
 class DBlog:
 
-    def __init__(self,dbconnection):
+    def __init__(self, dbconnection):
         self.dbConnection = dbconnection
 
     def create(self):
@@ -16,7 +16,7 @@ class DBlog:
         mycursor.close()
         mydb.close()
 
-    def add_log_channel(self,guild_id,log_type: str,channel_id: int):
+    def add_log_channel(self, guild_id, log_type: str, channel_id: int):
         res = self.get(int(guild_id))
         if not res:
             self.add(int(guild_id))
@@ -41,23 +41,23 @@ class DBlog:
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"UPDATE `logchannels` SET {log_type} = %s WHERE guild_id = %s"
-        mycursor.execute(query,(int(channel_id),int(guild_id)))
+        mycursor.execute(query, (int(channel_id), int(guild_id)))
         mydb.commit()
         mycursor.close()
         mydb.close()
         return True
 
-    def get(self,guild_id):
+    def get(self, guild_id):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"SELECT * FROM `logchannels` WHERE guild_id = %s"
-        mycursor.execute(query,(int(guild_id),))
+        mycursor.execute(query, (int(guild_id),))
         result = mycursor.fetchone()
         mycursor.close()
         mydb.close()
         return result
 
-    def get_dict(self,guild_id):
+    def get_dict(self, guild_id):
         res = self.get(int(guild_id))
         if not res:
             return None
@@ -69,16 +69,16 @@ class DBlog:
                 "mod_logs": res[5]
             }
 
-    def add(self,guild_id):
+    def add(self, guild_id):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"INSERT INTO `logchannels` (guild_id) VALUES (%s)"
-        mycursor.execute(query,(int(guild_id),))
+        mycursor.execute(query, (int(guild_id),))
         mydb.commit()
         mycursor.close()
         mydb.close()
 
-    def __remove_log_channel(self,guild_id,log_type: str):
+    def __remove_log_channel(self, guild_id, log_type: str):
         match log_type:
             case "all":
                 log_type = "all_logs"
@@ -94,33 +94,34 @@ class DBlog:
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"UPDATE `logchannels` SET {log_type} = 0 WHERE guild_id = %s"
-        mycursor.execute(query,(int(guild_id),))
+        mycursor.execute(query, (int(guild_id),))
         mydb.commit()
         mycursor.close()
         mydb.close()
 
-
-    def get_type_by_channel_id(self,channel_id,guild_id):
+    def get_type_by_channel_id(self, channel_id, guild_id):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = f"SELECT * FROM `logchannels` WHERE guild_id = %s"
-        mycursor.execute(query,(int(guild_id),))
+        mycursor.execute(query, (int(guild_id),))
         result = mycursor.fetchone()
         mycursor.close()
         mydb.close()
-        res = {"guild_id": result[1], "all": result[2], "message_delete": result[3], "audit_log": result[4], "mod_logs": result[5]}
+        res = {"guild_id": result[1], "all": result[2], "message_delete": result[3], "audit_log": result[4],
+               "mod_logs": result[5]}
 
         for i in res:
             if res[i] == channel_id and i != "guild_id":
                 return i
         return None
 
-    def remove_log_channel(self,guild_id,channel_id):
-        typee = self.get_type_by_channel_id(channel_id,int(guild_id))
+    def remove_audit_log_channel(self, guild_id):
+        self.__remove_log_channel(guild_id, "audit_log")
+
+    def remove_log_channel(self, guild_id, channel_id):
+        typee = type if type else self.get_type_by_channel_id(channel_id, int(guild_id))
         if typee:
-            self.__remove_log_channel(int(guild_id),typee)
+            self.__remove_log_channel(int(guild_id), typee)
             return True
-        else: return None
-
-
-
+        else:
+            return None

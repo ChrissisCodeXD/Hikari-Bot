@@ -11,11 +11,10 @@ log_plugin.add_checks(
 )
 
 
-
 @log_plugin.command()
 @lightbulb.check_exempt(utils.mod_check)
-@lightbulb.command("logs","the logging system")
-@lightbulb.implements(lightbulb.PrefixCommandGroup,lightbulb.SlashCommandGroup)
+@lightbulb.command("logs", "the logging system")
+@lightbulb.implements(lightbulb.PrefixCommandGroup, lightbulb.SlashCommandGroup)
 async def logs(ctx):
     pass
 
@@ -26,23 +25,20 @@ types = {
     "mod_logs": "mod_logs"
 }
 
-
-
-
-choices = ["all_logs","auto delete","mod_logs"]
+choices = ["all_logs", "auto delete", "mod_logs"]
 
 
 @logs.child()
-@lightbulb.option("channel","the channel you want to log the bot in",type=hikari.GuildChannel,required=True)
-@lightbulb.option("type","the type of log you want to send",type=str,required=True,choices=choices)
-@lightbulb.command("add","add a log channel",inherit_checks=True)
-@lightbulb.implements(lightbulb.PrefixSubCommand,lightbulb.SlashSubCommand)
+@lightbulb.option("channel", "the channel you want to log the bot in", type=hikari.GuildChannel, required=True)
+@lightbulb.option("type", "the type of log you want to send", type=str, required=True, choices=choices)
+@lightbulb.command("add", "add a log channel", inherit_checks=True)
+@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def add(ctx: lightbulb.Context):
     channel = ctx.options.channel
-    type : str = ctx.options.type
+    type: str = ctx.options.type
     type = types[type]
 
-    res = DBlog(ctx.app.db).add_log_channel(ctx.guild_id,type,channel.id)
+    res = DBlog(ctx.app.db).add_log_channel(ctx.guild_id, type, channel.id)
 
     if not res:
         embed = hikari.Embed(
@@ -55,7 +51,7 @@ async def add(ctx: lightbulb.Context):
         if ctx.interaction:
             await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
         else:
-            await ctx.respond(embed=embed,delete_after=5)
+            await ctx.respond(embed=embed, delete_after=5)
     else:
         channel = ctx.get_guild().get_channel(channel.id)
         embed = hikari.Embed(
@@ -67,16 +63,17 @@ async def add(ctx: lightbulb.Context):
         if ctx.interaction:
             await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
         else:
-            await ctx.respond(embed=embed,delete_after=5)
+            await ctx.respond(embed=embed, delete_after=5)
 
 
 @logs.child()
-@lightbulb.option("channel","the channel you want to remove from the log channel",type=hikari.TextableGuildChannel,required=True)
-@lightbulb.command("remove","remove a log channel",inherit_checks=True)
-@lightbulb.implements(lightbulb.PrefixSubCommand,lightbulb.SlashSubCommand)
+@lightbulb.option("channel", "the channel you want to remove from the log channel", type=hikari.TextableGuildChannel,
+                  required=True)
+@lightbulb.command("remove", "remove a log channel", inherit_checks=True)
+@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def remove(ctx: lightbulb.Context):
     channel = ctx.options.channel
-    res = DBlog(ctx.app.db).remove_log_channel(ctx.guild_id,channel.id)
+    res = DBlog(ctx.app.db).remove_log_channel(ctx.guild_id, channel.id)
 
     if not res:
         embed = hikari.Embed(
@@ -89,7 +86,7 @@ async def remove(ctx: lightbulb.Context):
         if ctx.interaction:
             await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
         else:
-            await ctx.respond(embed=embed,delete_after=5)
+            await ctx.respond(embed=embed, delete_after=5)
     else:
         channel = ctx.get_guild().get_channel(channel.id)
         embed = hikari.Embed(
@@ -101,12 +98,12 @@ async def remove(ctx: lightbulb.Context):
         if ctx.interaction:
             await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
         else:
-            await ctx.respond(embed=embed,delete_after=5)
+            await ctx.respond(embed=embed, delete_after=5)
 
 
 @logs.child()
-@lightbulb.command("list","list all the log channels",inherit_checks=True)
-@lightbulb.implements(lightbulb.PrefixSubCommand,lightbulb.SlashSubCommand)
+@lightbulb.command("list", "list all the log channels", inherit_checks=True)
+@lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def list(ctx: lightbulb.Context):
     res = DBlog(ctx.app.db).get_dict(ctx.guild_id)
     guild = ctx.get_guild()
@@ -120,15 +117,13 @@ async def list(ctx: lightbulb.Context):
         if ctx.interaction:
             await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
         else:
-            await ctx.respond(embed=embed,delete_after=5)
+            await ctx.respond(embed=embed, delete_after=5)
         return
     string = ""
-    print(res)
     for i in res:
 
         if res[i] != 0:
             string += f"{guild.get_channel(res[i]).mention} for `{i}`\n"
-
 
     embed = hikari.Embed(
         title="Log Channels",
@@ -139,9 +134,7 @@ async def list(ctx: lightbulb.Context):
     if ctx.interaction:
         await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
     else:
-        await ctx.respond(embed=embed,delete_after=5)
-
-
+        await ctx.respond(embed=embed, delete_after=5)
 
 
 @log_plugin.listener(hikari.GuildChannelDeleteEvent)
@@ -151,11 +144,9 @@ async def on_delete(event: hikari.GuildChannelDeleteEvent):
     res = DBlog(log_plugin.app.db).get_dict(g_id)
     if not res: return
 
-    for key,value in res.items():
+    for key, value in res.items():
         if value == r_id:
-            DBlog(log_plugin.app.db).remove_log_channel(g_id,r_id)
-
-
+            DBlog(log_plugin.app.db).remove_log_channel(g_id, r_id)
 
 
 def load(bot):

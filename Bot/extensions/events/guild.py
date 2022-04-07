@@ -13,7 +13,7 @@ Log = Logger()
 
 @guild_plugin.listener(hikari.GuildJoinEvent)
 async def on_guild_join(event: hikari.GuildJoinEvent):
-    #await Log.send_guild_join(event.guild)
+    # await Log.send_guild_join(event.guild)
     pass
 
 

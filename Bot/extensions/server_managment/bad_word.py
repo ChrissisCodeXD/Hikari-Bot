@@ -87,12 +87,12 @@ async def list(ctx: lightbulb.Context):
     if bad_words:
         bad_wordss = []
         for i in bad_words:
-            if type(i)==str:
+            if type(i) == str:
                 bad_wordss.append(i)
             else:
-                string='Badword Group: '
+                string = 'Badword Group: '
                 for j in i:
-                    string+=j+', '
+                    string += j + ', '
                 bad_wordss.append(string)
 
         embed = hikari.Embed(
@@ -169,8 +169,6 @@ async def add_many(ctx: lightbulb.Context):
             await ctx.respond(embed=embed, delete_after=5)
 
 
-
-
 @bad_word_plugin.listener(hikari.events.GuildMessageCreateEvent)
 async def on_message(event: hikari.events.GuildMessageCreateEvent):
     if event.guild_id is None: return
@@ -189,13 +187,15 @@ async def on_message(event: hikari.events.GuildMessageCreateEvent):
                 await message_delete(event.get_guild(), event.message, reason=f"Badword found!: `{i}`")
                 return
         else:
-            x=0
+            x = 0
             for word in i:
-                if word.lower() in event.message.content.lower(): x+=1
+                if word.lower() in event.message.content.lower(): x += 1
                 if x == len(i):
                     await event.message.delete()
-                    await message_delete(event.get_guild(),event.message,reason=f"Badword Group found!: `{', '.join(i)}`")
+                    await message_delete(event.get_guild(), event.message,
+                                         reason=f"Badword Group found!: `{', '.join(i)}`")
                     return
+
 
 @bad_word.child()
 @lightbulb.command("help", "Show the help for the badword system")
@@ -217,8 +217,8 @@ async def help(ctx: lightbulb.Context):
         timestamp=utils.get_time()
     )
     embed.add_field("Badword Groups", "You can add a group of words to the badword list.\n"
-                    "A Badword Group is a list of words, and only when all of the words are used in a message, "
-                    "the message will be deleted.\n")
+                                      "A Badword Group is a list of words, and only when all of the words are used in a message, "
+                                      "the message will be deleted.\n")
     if ctx.interaction:
         await ctx.respond(embed=embed, flags=hikari.MessageFlag.EPHEMERAL)
     else:
@@ -226,7 +226,8 @@ async def help(ctx: lightbulb.Context):
 
 
 @bad_word.child()
-@lightbulb.option("on_or_off", "Whether you want to turn the badword system on or off", type=str, required=True,choices=["on","off"])
+@lightbulb.option("on_or_off", "Whether you want to turn the badword system on or off", type=str, required=True,
+                  choices=["on", "off"])
 @lightbulb.command("toggle", "Toggle the badword system on or off")
 @lightbulb.implements(lightbulb.PrefixSubCommand, lightbulb.SlashSubCommand)
 async def toggle(ctx: lightbulb.Context):

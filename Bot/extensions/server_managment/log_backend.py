@@ -2,12 +2,11 @@ import hikari
 
 from imports import *
 from Bot.DataBase.logChannel import DBlog
+
 log_backend_plugin = lightbulb.Plugin("server_managment.log_backend")
 
 
-
-async def message_delete(guild:hikari.Guild,message:hikari.Message,reason,fields:dict=None):
-
+async def message_delete(guild: hikari.Guild, message: hikari.Message, reason, fields: dict = None):
     res = DBlog(log_backend_plugin.app.db).get_dict(guild.id)
     c_id = res["message_delete"]
     if c_id == 0: return
@@ -25,8 +24,8 @@ async def message_delete(guild:hikari.Guild,message:hikari.Message,reason,fields
     )
     embed.set_thumbnail(message.author.make_avatar_url())
     if fields:
-        for key,value in fields.items():
-            embed.add_field(name=key,value=value)
+        for key, value in fields.items():
+            embed.add_field(name=key, value=value)
 
     all_id = res["all_logs"]
     if all_id == 0: return
@@ -36,7 +35,8 @@ async def message_delete(guild:hikari.Guild,message:hikari.Message,reason,fields
 
     await channel.send(embed=embed)
 
-async def audit_log(guild:hikari.Guild,fields:dict=None):
+
+async def audit_log(guild: hikari.Guild, fields: dict = None):
     res = DBlog(log_backend_plugin.app.db).get_dict(guild.id)
     c_id = res["audit_log"]
     if c_id == 0: return
@@ -48,28 +48,25 @@ async def audit_log(guild:hikari.Guild,fields:dict=None):
         timestamp=utils.get_time()
     )
     if fields:
-        for key,value in fields.items():
-            embed.add_field(name=key,value=value)
+        for key, value in fields.items():
+            embed.add_field(name=key, value=value)
 
     all_id = res["all_logs"]
     if all_id == 0: return
     all_channel = guild.get_channel(all_id)
     if all_channel:
-        await all_logs(embed,all_channel)
+        await all_logs(embed, all_channel)
 
     await channel.send(embed=embed)
 
 
-async def all_logs(embed,channel):
+async def all_logs(embed, channel):
     await channel.send(embed=embed)
-
-
-
-
 
 
 def load(bot):
     bot.add_plugin(log_backend_plugin)
+
 
 def unload(bot):
     bot.remove_plugin(log_backend_plugin)

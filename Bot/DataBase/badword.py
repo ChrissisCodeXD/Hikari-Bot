@@ -26,7 +26,6 @@ class DBBadWord:
         mycursor.close()
         mydb.close()
 
-
     def get_bad_words(self, guild_id):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
@@ -58,7 +57,7 @@ class DBBadWord:
             self.add(guild_id)
             return self.add_bad_word(guild_id, word)
 
-    def add(self,guild_id):
+    def add(self, guild_id):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
         query = "INSERT INTO badwords (guild_id, words,ison) VALUES (%s, '[]',0)"
@@ -66,8 +65,6 @@ class DBBadWord:
         mydb.commit()
         mycursor.close()
         mydb.close()
-
-
 
     def remove_bad_word(self, guild_id, word):
         mydb = self.dbConnection.getConnection()

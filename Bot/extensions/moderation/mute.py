@@ -306,7 +306,7 @@ async def mute_add(ctx: lightbulb.Context) -> None:
                 await ctx.respond(embed=embed, delete_after=20)
 
 
-#TODO: Add a way to remove the Muterole when all mutes are removed!!!!
+# TODO: Add a way to remove the Muterole when all mutes are removed!!!!
 
 @mute_plugin.listener(hikari.RoleDeleteEvent)
 async def on_delete(event: hikari.RoleDeleteEvent):
