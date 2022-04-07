@@ -108,7 +108,7 @@ class DBMute:
     def get_mute(self, cid):
         mydb = self.dbConnection.getConnection()
         mycursor = mydb.cursor()
-        query = f"SELECT * FROM warn WHERE unique_id=%s;"
+        query = f"SELECT * FROM mute WHERE unique_id=%s;"
         mycursor.execute(query, [cid])
         result = mycursor.fetchall()
         mycursor.close()

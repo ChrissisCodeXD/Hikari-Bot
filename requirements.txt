@@ -6,7 +6,6 @@ chardet
 charset-normalizer
 colorama
 colorlog
-discord.py
 frozenlist
 hikari
 hikari-lightbulb

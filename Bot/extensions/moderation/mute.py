@@ -107,6 +107,8 @@ async def mute_delete(ctx: lightbulb.Context):
         await _check(ctx)
         if not ctx.interaction: await ctx.event.message.delete()
         if 'delete' in ctx.raw_options: del ctx.raw_options['delete']
+        settings = DBMute(ctx.app.db).get_settings(ctx.get_guild().id)
+        role = ctx.get_guild().get_role(settings[str(ctx.get_guild().id)])
         if not ctx.raw_options:
             embed = hikari.Embed(
                 title=f"❌ Missing Identifier!",
@@ -163,6 +165,7 @@ async def mute_delete(ctx: lightbulb.Context):
 
                 else:
                     res = DBMute(mute_plugin.app.db).delete_mute(ctx.options.id)
+
                     if not res:
                         embed = hikari.Embed(
                             title=f"❌ ID Error!",
@@ -197,6 +200,9 @@ async def mute_delete(ctx: lightbulb.Context):
                 return await ctx.respond(embed=embed, components=[], delete_after=5)
         else:
             res = DBMute(mute_plugin.app.db).delete_mute(ctx.options.id)
+            res2 = DBMute(mute_plugin.app.db).get_mute(ctx.options.id)
+            user = ctx.get_guild().get_member(res2[3])
+
             if not res:
                 embed = hikari.Embed(
                     title=f"❌ ID Error!",
@@ -279,6 +285,8 @@ async def mute_add(ctx: lightbulb.Context) -> None:
             else:
                 await ctx.respond(embed=embed, delete_after=20)
 
+
+#TODO: Add a way to remove the Muterole when all mutes are removed!!!!
 
 @mute_plugin.listener(hikari.RoleDeleteEvent)
 async def on_delete(event: hikari.RoleDeleteEvent):

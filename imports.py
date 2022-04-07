@@ -12,7 +12,6 @@ import datetime
 import calendar
 from discord import Webhook, AsyncWebhookAdapter
 import aiohttp
-import discord
 import traceback
 import json, re, random
 import miru
