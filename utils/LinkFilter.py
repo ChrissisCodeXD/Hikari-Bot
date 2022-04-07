@@ -1,17 +1,19 @@
 from imports import *
 from Bot.DataBase.LinkSystem import DBLink
-
+from Bot.extensions.server_managment.log_backend import message_delete
 
 class LinkFilter:
 
-    def __init__(self, app, msg: hikari.Message):
+    def __init__(self, app, msg: hikari.Message,event):
         self.app = app
         self.msg = msg
         self.guild_id = msg.guild_id
+        self.event = event
         self.settings = DBLink(app.db).get_settings(self.guild_id)
 
     async def case(self, case: str):
         await self.msg.delete()
+        await message_delete(self.event.get_guild(),self.msg,"Forbidden Link found!",{"Link Type":case})
         # TODO: Add audit log when message was deleted!
 
     async def is_social_media(self):

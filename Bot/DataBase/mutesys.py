@@ -198,7 +198,7 @@ class DBMute:
         mydb.commit()
         mycursor.close()
         mydb.close()
-        return True
+        return result
 
     def delete_all_mute_from(self, user_id, guild_id):
         mydb = self.dbConnection.getConnection()
